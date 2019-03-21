@@ -35,9 +35,9 @@ class GameContainer extends Component {
     return (
       <div>
         UNO!
-        <CompHandContainer />
-        <GameDeckContainer />
-        <UserHandContainer />
+          <CompHandContainer comp={this.state.players[1]}/>
+          <GameDeckContainer activecard={this.state.active_card} />
+          <UserHandContainer user={this.state.players[0]}/>
       </div>
     )
   }

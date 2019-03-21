@@ -5,7 +5,7 @@ class CompHandContainer extends Component {
 
   render() {
     return (
-      <div>
+      <div className="ui cards CompHandContainer">
         Computers cards are displayed here
         <Card />
         <Card />

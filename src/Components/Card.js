@@ -5,7 +5,7 @@ class Card extends Component {
 
   render() {
     return(
-      <div>
+      <div className="card">
         Card
         {(this.props.data)?
           `Number: ${this.props.data.Number} Color:  ${this.props.data.Color}`

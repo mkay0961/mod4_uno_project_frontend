@@ -8,6 +8,31 @@
   pointer-events: none;
 }
 
+.CompHandContainer{
+    
+    display: flex;
+    border-style: solid;
+    border-width: 2px;
+}
+.card{
+
+    width: 400px;
+    height: 300px;
+
+}
+.GameDeckContainer{
+
+    display: flex;
+    border-style: solid;
+    border-width: 2px;
+}
+.UserHandContainer{
+    display: flex;
+
+    border-style: solid;
+    border-width: 2px;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

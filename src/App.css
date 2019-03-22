@@ -15,16 +15,22 @@
     border-width: 2px;
 }
 
-/* .card{
+.card{
 
-    width: 100px;
-    height: 200px;
-    justify-content: center;
-} */
+    width: 90px;
+    height: 125px;
+    /* justify-content: center; */
+    border-style: solid;
+}
 
 /* .hand {
   display: flex;
   align-items: center;
+} */
+
+/* #test {
+  height: 250px;
+  width: 150px;
 } */
 
 .GameDeckContainer{

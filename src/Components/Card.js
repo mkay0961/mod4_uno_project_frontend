@@ -8,7 +8,7 @@ class Card extends Component {
       <div className="card">
         {(this.props.data)?
 
-          <img src={require(`../card-imgs/${this.props.data.Color}-${this.props.data.Number}.png`)} alt="card" />
+          <img src={require(`../card-imgs/${this.props.data.Color}-${this.props.data.Number}.png`)} alt="card" id="test"/>
           :
           <img src={require(`../card-imgs/card-back.png`)} alt="card-back" />
         }

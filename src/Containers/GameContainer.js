@@ -38,17 +38,27 @@ class GameContainer extends Component {
     })
   }
 
+  cardlogic(card){
+    let rtnval = false
+    if (card.Number === this.state.active_card.Number ||card.Color === this.state.active_card.Color ) {
+      rtnval = true
+    }
+    return rtnval
+  }
+
   onSelectCardClick = (card) =>{
     console.log("you clicked card", card);
-    let newplayerhand = this.state.userhand
-    newplayerhand = newplayerhand.filter((c)=>c!==card)
+    console.log(this.cardlogic(card));
+    if(this.cardlogic(card)){
+      let newplayerhand = this.state.userhand
+      newplayerhand = newplayerhand.filter((c)=>c!==card)
 
-    this.setState({
-      deck: [this.state.active_card, ...this.state.deck],
-      active_card: card,
-      userhand: newplayerhand
-    })
-
+      this.setState({
+        deck: [this.state.active_card, ...this.state.deck],
+        active_card: card,
+        userhand: newplayerhand
+      })
+    }
 
   }
   handleActiveCard = (card) =>{

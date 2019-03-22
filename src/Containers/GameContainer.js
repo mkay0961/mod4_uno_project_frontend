@@ -22,8 +22,6 @@ class GameContainer extends Component {
       deck: [],
       active_card: null,
       players: [],
-      userhand: [],
-      comp1hand: [],
       winner: null,
       game_status: 'Pending',
       turn: 0,
@@ -81,6 +79,7 @@ class GameContainer extends Component {
   }
 
   playCard = (card) =>{
+    console.log("PLAY CARD");
     let pastActiveCard = this.state.active_card
 
     let player = {...this.state.players[this.state.turn]}
@@ -88,17 +87,20 @@ class GameContainer extends Component {
     player.cards = player.cards.filter((c)=>c!==card)
     let updatedPlayers = [...this.state.players]
     updatedPlayers.splice(this.state.turn,1,player)
-
+    console.log(this.state.players[this.state.turn]);
     this.setState({
       active_card: card,
       deck: [pastActiveCard, ...this.state.deck].sort(() => Math.random() - 0.5),
       players: updatedPlayers
-    })
+    },()=>{this.checkWin()
+          this.changeTurn()
+        })
 
-    // this.checkWin()
+
 
   }
   changeTurn(){
+    console.log("CHANGE TURN");
     this.setState({
       turn: ((this.state.turn +1) % this.state.players.length)
     })
@@ -113,19 +115,20 @@ class GameContainer extends Component {
     data.deck = this.state.deck
     data.players = this.state.players
 
-    // fetch(this.getURL(),{
-    //   method: "PATCH",
-    //   headers: {
-    //       "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify(data)
-    // }).then(res => res.json())
-    //   .then(json => console.log(json))
+    fetch(this.getURL(),{
+      method: "PATCH",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(res => res.json())
+      .then(json => console.log(json))
   }
 
   checkWin(){
+    console.log("CHECK WINNNN");
     let cardCount = this.state.players[this.state.turn].cards.length
-    console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
+    // console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
     if(cardCount === (0)){
       this.setState({
         winner: this.state.players[this.state.turn],
@@ -136,15 +139,16 @@ class GameContainer extends Component {
   }
 
   onSelectCardClick = (card) =>{
-    this.updateBackend()
     if(this.cardlogic(card)){
+      console.log("about to call play card");
       this.playCard(card)
-      this.changeTurn()
+      // this.changeTurn()
       setTimeout(this.compTurn, 1000)
     }
   }
 
   compTurn =() => {
+    console.log("NEW COMP TURN");
     let potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
 
     while (potentialMoves.length === 0) {
@@ -160,7 +164,7 @@ class GameContainer extends Component {
 
     this.playCard(card)
 
-    this.changeTurn()
+    // this.changeTurn()
   }
 
   handleActiveCard = (card) =>{
@@ -168,7 +172,7 @@ class GameContainer extends Component {
   }
 
   saveGame = () => {
-    console.log('hi')
+    this.updateBackend()
   }
 
   render() {

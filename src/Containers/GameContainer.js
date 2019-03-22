@@ -100,7 +100,8 @@ class GameContainer extends Component {
 
   }
   changeTurn(){
-    console.log("CHANGE TURN");
+    console.log("cur CHANGE TURN",(this.state.turn +1), ((this.state.turn) % this.state.players.length));
+
     this.setState({
       turn: ((this.state.turn +1) % this.state.players.length)
     })
@@ -143,7 +144,12 @@ class GameContainer extends Component {
       console.log("about to call play card");
       this.playCard(card)
       // this.changeTurn()
-      setTimeout(this.compTurn, 1000)
+      console.log(this.state.turn);
+      for(let x= 0; x<3000;x+=1000){
+        setTimeout(this.compTurn, x)
+      }
+
+
     }
   }
 
@@ -161,7 +167,6 @@ class GameContainer extends Component {
 
     //change to pic random
     let card = potentialMoves[0]
-
     this.playCard(card)
 
     // this.changeTurn()
@@ -182,6 +187,8 @@ class GameContainer extends Component {
       <div>
         <Header />
         <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
+        <CompHandContainer comphand={this.state.players[2].cards}name={this.state.players[2].name}/>
+        <CompHandContainer comphand={this.state.players[3].cards}name={this.state.players[3].name}/>
         <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
         <div className="save-button" onClick={this.saveGame}>

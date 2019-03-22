@@ -31,8 +31,12 @@ class GameContainer extends Component {
     }
   }
 
+  getURL(){
+    return 'http://localhost:3000/games/1'
+  }
+
   componentDidMount() {
-    fetch('http://localhost:3000/games/1')
+    fetch(this.getURL())
     .then(res => res.json())
     .then(game => this.processJson(game) )
   }
@@ -91,25 +95,48 @@ class GameContainer extends Component {
       players: updatedPlayers
     })
 
+    // this.checkWin()
+
   }
   changeTurn(){
-    this.checkWin()
-    //post to backend
     this.setState({
       turn: ((this.state.turn +1) % this.state.players.length)
     })
   }
 
+  updateBackend(){
+    console.log("GONNA FETCH");
+    let data = {}
+    data.game_status = this.state.game_status
+    data.winner = this.state.winner
+    data.active_card = this.state.active_card
+    data.deck = this.state.deck
+    data.players = this.state.players
+
+    // fetch(this.getURL(),{
+    //   method: "PATCH",
+    //   headers: {
+    //       "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify(data)
+    // }).then(res => res.json())
+    //   .then(json => console.log(json))
+  }
+
   checkWin(){
-    let cardCount = this.state.players.map((player)=>{
-      return player.cards.length
-    })
-    if(cardCount.includes(0)){
+    let cardCount = this.state.players[this.state.turn].cards.length
+    console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
+    if(cardCount === (0)){
+      this.setState({
+        winner: this.state.players[this.state.turn],
+        game_status: "Completed"
+      })
       alert(`WINNER ${this.state.players[this.state.turn].name}`)
     }
   }
 
   onSelectCardClick = (card) =>{
+    this.updateBackend()
     if(this.cardlogic(card)){
       this.playCard(card)
       this.changeTurn()

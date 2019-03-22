@@ -9,6 +9,9 @@ class GameDeckContainer extends Component {
         <div className="ui cards GameDeckContainer">
             <Card data={this.props.activeCard} onSelectCardClick={this.props.handleActiveCard} />
             <Deck handleDeckClick={this.props.handleDeckClick}/>
+            <div>
+              {`Current turn: player ${this.props.turnCount}`}
+            </div>
         </div>
       )
   }

@@ -15,7 +15,7 @@ class Card extends Component {
     return(
       <div className="card" >
         {(this.props.data)?
-          <div onClick={()=>this.props.onSelectCardClick(this.props.data)}>
+          <div onClick={(e)=>this.props.onSelectCardClick(this.props.data, e)}>
             <img onMouseEnter={(e)=>this.enterMouse(e)} onMouseLeave={(e)=>this.leaveMouse(e)} src={require(`../card-imgs/${this.props.data.Color}-${this.props.data.Number}.png`)} alt="card" id="test"/>
           </div>
           :

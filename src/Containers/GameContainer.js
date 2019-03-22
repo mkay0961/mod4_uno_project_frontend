@@ -17,6 +17,7 @@ class GameContainer extends Component {
       comp1hand: [],
       winner: null,
       game_status: 'Pending',
+      turn: 0,
       loaded: false
     }
   }
@@ -46,21 +47,71 @@ class GameContainer extends Component {
     return rtnval
   }
 
-  onSelectCardClick = (card) =>{
+  onSelectCardClick = (card, e) =>{
+    // e.persist()
     console.log("you clicked card", card);
     console.log(this.cardlogic(card));
-    if(this.cardlogic(card)){
-      let newplayerhand = this.state.userhand
-      newplayerhand = newplayerhand.filter((c)=>c!==card)
+    console.log((e === undefined)? "comp":"user")
+    if(this.state.turn == 0){
+      if(this.cardlogic(card)){
+        let newplayerhand = this.state.userhand
+        newplayerhand = newplayerhand.filter((c)=>c!==card)
 
-      this.setState({
-        deck: [this.state.active_card, ...this.state.deck],
-        active_card: card,
-        userhand: newplayerhand
-      })
-    }
+        this.setState({
+          deck: [this.state.active_card, ...this.state.deck],
+          active_card: card,
+          userhand: newplayerhand,
+          turn: 1
+        })
+        setTimeout(this.compTurn, 1000)}
+      }
+      else if (this.state.turn === 0) {
+        console.log("COMP TURN");
+      }
+
 
   }
+
+  compTurn = () => {
+    let potentialMoves = this.state.comp1hand.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+
+    while (potentialMoves.length === 0) {
+      //drawcard
+      if(this.state.deck.length > 0){
+        let drawnCard = this.state.deck.pop()
+        let updatedDeck = this.state.deck
+        updatedDeck = updatedDeck.filter((c)=>c!==drawnCard)
+
+        //shuffle
+        updatedDeck.sort(() => Math.random() - 0.5);
+        updatedDeck.sort(() => Math.random() - 0.5);
+
+        this.setState({
+          deck: updatedDeck,
+          comp1hand: [...this.state.comp1hand, drawnCard]
+        })
+      }
+      potentialMoves = this.state.comp1hand.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+    }
+    let card = potentialMoves[0]
+
+    let newCompHand = this.state.comp1hand
+    newCompHand = newCompHand.filter((c)=>c!==card)
+    //random from that array
+    //set that to top card
+    this.setState({
+      deck: [this.state.active_card, ...this.state.deck],
+      active_card: card,
+      comp1hand: newCompHand,
+      turn: 0,
+
+    })
+    //change turn
+
+
+
+  }
+
   handleActiveCard = (card) =>{
     console.log("you clicked the active card", card);
   }
@@ -74,7 +125,7 @@ class GameContainer extends Component {
       //shuffle
       updatedDeck.sort(() => Math.random() - 0.5);
       updatedDeck.sort(() => Math.random() - 0.5);
-      
+
       this.setState({
         deck: updatedDeck,
         userhand: [...this.state.userhand, drawnCard]
@@ -90,7 +141,7 @@ class GameContainer extends Component {
       <div>
         <Header />
         <CompHandContainer comphand={this.state.comp1hand}name={this.state.players[1].name}/>
-        <GameDeckContainer handleDeckClick={this.handleDeckClick} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard}/>
+        <GameDeckContainer handleDeckClick={this.handleDeckClick} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.userhand} name={this.state.players[0].name} />
       </div>
       :

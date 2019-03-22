@@ -7,8 +7,8 @@ class CompHandContainer extends Component {
     return (
       <div className="ui cards CompHandContainer">
 
-          {this.props.comp.cards.map(c => <Card key={c.id} />)}
-        
+          {this.props.comphand.map((c,inx) => <Card key={inx} />)}
+
       </div>
     )
   }

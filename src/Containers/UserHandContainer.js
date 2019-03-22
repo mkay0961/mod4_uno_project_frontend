@@ -7,9 +7,7 @@ class UserHandContainer extends Component {
   render() {
     return(
       <div className="ui cards UserHandContainer">
-
-          {this.props.user.cards.map(c => <Card key={c.id} data={c} />)}
-        
+          {this.props.userhand.map((c,inx) =><Card onSelectCardClick={this.props.onSelectCardClick} key={inx} data={c} />)}
       </div>
     )
   }

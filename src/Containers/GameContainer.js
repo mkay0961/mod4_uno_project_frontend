@@ -167,6 +167,10 @@ class GameContainer extends Component {
     console.log("you clicked the active card", card);
   }
 
+  saveGame = () => {
+    console.log('hi')
+  }
+
   render() {
 
     return (
@@ -176,6 +180,9 @@ class GameContainer extends Component {
         <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
         <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
+        <div className="save-button" onClick={this.saveGame}>
+          SAVE
+        </div>
       </div>
       :
       null

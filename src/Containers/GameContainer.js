@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
+import Header from '../Components/Header'
 
 class GameContainer extends Component {
 
@@ -11,7 +12,10 @@ class GameContainer extends Component {
     this.state = {
       deck: [],
       active_card: null,
-      players: [],
+      playerOne: null,
+      playerTwo: null,
+      playerOneHand: [],
+      playerTwoHand: [],
       winner: null,
       game_status: 'Pending'
     }
@@ -27,17 +31,20 @@ class GameContainer extends Component {
     this.setState({
       deck: game.deck,
       active_card: game.active_card,
-      players: game.players
+      playerOne: game.players[0],
+      playerTwo: game.players[1],
+      playerOneHand: game.players[0].cards,
+      playerTwoHand: game.players[1].cards
     })
   }
 
   render() {
     return (
       <div>
-        UNO!
-          <CompHandContainer comp={this.state.players[1]}/>
-          <GameDeckContainer activecard={this.state.active_card} />
-          <UserHandContainer user={this.state.players[0]}/>
+        <Header />
+        <CompHandContainer compHand={this.state.playerTwoHand}/>
+        <GameDeckContainer activeCard={this.state.active_card} />
+        <UserHandContainer userHand={this.state.playerOneHand}/>
       </div>
     )
   }

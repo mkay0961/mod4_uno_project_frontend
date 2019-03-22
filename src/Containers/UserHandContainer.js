@@ -6,13 +6,10 @@ class UserHandContainer extends Component {
 
   render() {
     return(
-      <div className="ui cards UserHandContainer">
-        Users cards are displayed here
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+      <div className="ui five column grid hand">
+        <div className="row">
+          {this.props.userHand.map(c => <Card key={c.id} data={c} />)}
+        </div>
       </div>
     )
   }

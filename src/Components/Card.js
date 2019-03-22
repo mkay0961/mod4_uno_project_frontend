@@ -6,11 +6,11 @@ class Card extends Component {
   render() {
     return(
       <div className="card">
-        Card
         {(this.props.data)?
-          `Number: ${this.props.data.Number} Color:  ${this.props.data.Color}`
+
+          <img src={require(`../card-imgs/${this.props.data.Color}-${this.props.data.Number}.png`)} alt="card" />
           :
-          "SHOW BACK OF CARD"
+          <img src={require(`../card-imgs/card-back.png`)} alt="card-back" />
         }
       </div>
       )

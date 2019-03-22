@@ -5,13 +5,10 @@ class CompHandContainer extends Component {
 
   render() {
     return (
-      <div className="ui cards CompHandContainer">
-        Computers cards are displayed here
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+      <div className="ui five column grid">
+        <div className="row">
+          {this.props.compHand.map(c => <Card key={c.id} />)}
+        </div>
       </div>
     )
   }

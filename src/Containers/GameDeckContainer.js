@@ -5,9 +5,9 @@ import Card from '../Components/Card'
 class GameDeckContainer extends Component {
   render() {
     return(
-        <div className="ui cards GameDeckContainer">
-            The deck and active card go here
-            <Card data={this.props.activecard} />
+        <div className="ui two column grid">
+            flexbox hates me
+            <Card data={this.props.activeCard} />
             <Card />
 
         </div>

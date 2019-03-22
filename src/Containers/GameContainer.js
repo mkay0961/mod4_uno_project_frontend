@@ -12,10 +12,7 @@ class GameContainer extends Component {
     this.state = {
       deck: [],
       active_card: null,
-      playerOne: null,
-      playerTwo: null,
-      playerOneHand: [],
-      playerTwoHand: [],
+      players: [],
       winner: null,
       game_status: 'Pending',
       loaded: false
@@ -32,10 +29,7 @@ class GameContainer extends Component {
     this.setState({
       deck: game.deck,
       active_card: game.active_card,
-      playerOne: game.players[0],
-      playerTwo: game.players[1],
-      playerOneHand: game.players[0].cards,
-      playerTwoHand: game.players[1].cards,
+      players: game.players,
       loaded: true
     })
   }
@@ -45,9 +39,9 @@ class GameContainer extends Component {
       this.state.loaded ?
       <div>
         <Header />
-        <CompHandContainer compHand={this.state.playerTwoHand}/>
+        <CompHandContainer comp={this.state.players[1]}/>
         <GameDeckContainer activeCard={this.state.active_card} />
-        <UserHandContainer userHand={this.state.playerOneHand}/>
+        <UserHandContainer user={this.state.players[0]}/>
       </div>
       :
       null

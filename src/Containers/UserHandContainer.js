@@ -8,7 +8,7 @@ class UserHandContainer extends Component {
     return(
       <div className="ui five column grid hand">
         <div className="row">
-          {this.props.userHand.map(c => <Card key={c.id} data={c} />)}
+          {this.props.user.cards.map(c => <Card key={c.id} data={c} />)}
         </div>
       </div>
     )

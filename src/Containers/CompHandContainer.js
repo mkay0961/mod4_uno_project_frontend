@@ -7,7 +7,7 @@ class CompHandContainer extends Component {
     return (
       <div className="ui five column grid">
         <div className="row">
-          {this.props.compHand.map(c => <Card key={c.id} />)}
+          {this.props.comp.cards.map(c => <Card key={c.id} />)}
         </div>
       </div>
     )

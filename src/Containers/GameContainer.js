@@ -70,6 +70,11 @@ class GameContainer extends Component {
       let drawnCard = this.state.deck.pop()
       let updatedDeck = this.state.deck
       updatedDeck = updatedDeck.filter((c)=>c!==drawnCard)
+
+      //shuffle
+      updatedDeck.sort(() => Math.random() - 0.5);
+      updatedDeck.sort(() => Math.random() - 0.5);
+      
       this.setState({
         deck: updatedDeck,
         userhand: [...this.state.userhand, drawnCard]

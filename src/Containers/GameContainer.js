@@ -17,7 +17,8 @@ class GameContainer extends Component {
       playerOneHand: [],
       playerTwoHand: [],
       winner: null,
-      game_status: 'Pending'
+      game_status: 'Pending',
+      loaded: false
     }
   }
 
@@ -34,18 +35,22 @@ class GameContainer extends Component {
       playerOne: game.players[0],
       playerTwo: game.players[1],
       playerOneHand: game.players[0].cards,
-      playerTwoHand: game.players[1].cards
+      playerTwoHand: game.players[1].cards,
+      loaded: true
     })
   }
 
   render() {
     return (
+      this.state.loaded ?
       <div>
         <Header />
         <CompHandContainer compHand={this.state.playerTwoHand}/>
         <GameDeckContainer activeCard={this.state.active_card} />
         <UserHandContainer userHand={this.state.playerOneHand}/>
       </div>
+      :
+      null
     )
   }
 

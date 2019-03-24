@@ -144,13 +144,9 @@ class GameContainer extends Component {
   }
 
   compTurn = () => {
-    // let activePlayer = this.state.players[this.state.turn]
     let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
 
     while (potentialMoves.length === 0) {
-      console.log('computer drawing a card');
-      console.log('hello? ');
-      console.log('current hand', this.state.players[this.state.turn].cards);
       this.drawCard()
       potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
     }

@@ -149,7 +149,7 @@ class GameContainer extends Component {
 
     while (potentialMoves.length === 0) {
       console.log('computer drawing a card');
-      console.log('hello?');
+      console.log('hello? ');
       console.log('current hand', this.state.players[this.state.turn].cards);
       this.drawCard()
       potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))

@@ -62,6 +62,7 @@ class GameContainer extends Component {
     //removes one card from the deck and adds it to the current players hand
     let player = {...this.state.players[this.state.turn]}
     let deck = [...this.state.deck]
+    console.log(deck)
 
     if (deck.length > 0 ) {
       let drawnCard = this.state.deck.pop()
@@ -77,6 +78,7 @@ class GameContainer extends Component {
       })
     } else {
       window.alert('the game is broken')
+      this.setState({gameStatus:'Completed'})
     }
 
   }
@@ -142,12 +144,15 @@ class GameContainer extends Component {
   }
 
   compTurn = () => {
-    let activePlayer = this.state.players[this.state.turn]
-    let potentialMoves = activePlayer.cards.filter(card => this.checkValidMove(card))
+    // let activePlayer = this.state.players[this.state.turn]
+    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
 
     while (potentialMoves.length === 0) {
+      console.log('computer drawing a card');
+      console.log('hello?');
+      console.log('current hand', this.state.players[this.state.turn].cards);
       this.drawCard()
-      potentialMoves = activePlayer.cards.filter(card => this.checkValidMove(card))
+      potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
     }
 
     //computer selects a random card from their possible plays
@@ -169,15 +174,15 @@ class GameContainer extends Component {
       this.state.gameStatus === 'In Progress' ?
       <div>
         <CompHandContainer
-          comphand={this.state.players[1].cards}
+          hand={this.state.players[1].cards}
           name={this.state.players[1].name}
         />
         <CompHandContainer
-          comphand={this.state.players[2].cards}
+          hand={this.state.players[2].cards}
           name={this.state.players[2].name}
         />
         <CompHandContainer
-          comphand={this.state.players[3].cards}
+          hand={this.state.players[3].cards}
           name={this.state.players[3].name}
         />
         <GameDeckContainer
@@ -187,8 +192,8 @@ class GameContainer extends Component {
           turnCount={this.state.turn}
         />
         <UserHandContainer
-          onSelectCardClick={this.handleCardClick}
-          userhand={this.state.players[0].cards}
+          handleCardClick={this.handleCardClick}
+          hand={this.state.players[0].cards}
           name={this.state.players[0].name}
         />
         <div className="save-button">

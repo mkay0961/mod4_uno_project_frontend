@@ -1,17 +1,13 @@
-import React, {Component} from 'react'
+import React from 'react'
 import Card from '../components/Card'
 
-class CompHandContainer extends Component {
+const CompHandContainer = (props) => {
 
-  render() {
-    return (
-      <div className="ui cards CompHandContainer">
-
-          {this.props.comphand.map((c,inx) => <Card key={inx} />)}
-
-      </div>
-    )
-  }
+  return (
+    <div className="ui cards CompHandContainer">
+      {props.hand.map( (c, index) => <Card key={index} />)}
+    </div>
+  )
 
 }
 

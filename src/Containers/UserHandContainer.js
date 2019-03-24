@@ -1,16 +1,14 @@
-import React, {Component} from 'react'
+import React from 'react'
 import Card from '../components/Card'
 
 
-class UserHandContainer extends Component {
+const UserHandContainer = (props) => {
 
-  render() {
-    return(
-      <div className="ui cards UserHandContainer">
-          {this.props.userhand.map((c,inx) =><Card onSelectCardClick={this.props.onSelectCardClick} key={inx} data={c} />)}
-      </div>
-    )
-  }
+  return(
+    <div className="ui cards UserHandContainer">
+      {props.hand.map( (c, index) => <Card handleCardClick={props.handleCardClick} key={index} data={c} />)}
+    </div>
+  )
 
 }
 

@@ -1,20 +1,15 @@
-import React, {Component} from 'react'
+import React from 'react'
 import Card from '../components/Card'
 import Deck from '../components/Deck'
 
+const GameDeckContainer = (props) => {
 
-class GameDeckContainer extends Component {
-  render() {
-    return(
-        <div className="ui cards GameDeckContainer">
-            <Card data={this.props.activeCard} onSelectCardClick={this.props.handleActiveCard} />
-            <Deck handleDeckClick={this.props.handleDeckClick}/>
-            <div>
-              {`Current turn: player ${this.props.turnCount}`}
-            </div>
-        </div>
-      )
-  }
+  return(
+    <div className="ui cards GameDeckContainer">
+      <Card data={props.activeCard} onSelectCardClick={props.handleActiveCard} />
+      <Deck handleDeckClick={props.handleDeckClick}/>
+    </div>
+  )
 
 }
 

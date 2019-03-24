@@ -16,6 +16,7 @@ class GameContainer extends Component {
     super(props)
     this.state = {
       id: null,
+      // reversed: false,
       deck: [],
       active_card: null,
       players: [],
@@ -69,7 +70,10 @@ class GameContainer extends Component {
 
   cardlogic(card){
     let rtnval = false
-    if (card.Number === this.state.active_card.Number ||card.Color === this.state.active_card.Color ) {
+    if (card.Number === this.state.active_card.Number ||card.Color === this.state.active_card.Color) {
+      rtnval = true
+    }
+    else if (card.Color === "wild" || this.state.active_card.Color === "wild") {
       rtnval = true
     }
     return rtnval
@@ -99,6 +103,7 @@ class GameContainer extends Component {
 
   playCard = (card) =>{
     console.log("PLAY CARD");
+
     let pastActiveCard = this.state.active_card
 
     let player = {...this.state.players[this.state.turn]}
@@ -111,19 +116,57 @@ class GameContainer extends Component {
       active_card: card,
       deck: [pastActiveCard, ...this.state.deck].sort(() => Math.random() - 0.5),
       players: updatedPlayers
-    },()=>{this.checkWin()
+    },()=>{
+          this.checkWin()
           this.changeTurn()
         })
 
+    // if(card.Number === "draw2"){
+    //
+    //   console.log("DRAW2");
+    // }else if(card.Number === "skip"){
+    //   // this.changeTurn()
+    //   console.log("SKIP");
+    // }else if (card.Number === "reverse") {
+    //   // this.setState({reversed: !this.state.reversed})
+    //   console.log("RECERSE");
+    // }else if (card.Number === "color") {
+    //   this.setState({})
+    //   console.log("wild color");
+    // }else if (card.Number === "draw4") {
+    //   console.log("draw4");
+    // }
 
 
   }
+  // doPlayCardLogic(card){
+  //   if(card.Number === "draw2"){
+  //     console.log("DRAW2");
+  //   }else if(card.Number === "skip"){
+  //     console.log("SKIP");
+  //   }else if (card.Number === "reverse") {
+  //     console.log("RECERSE");
+  //   }
+  // }
+
+
   changeTurn(){
+    // if(this.state.reversed){
+    //   let newPostition = this.state.turn - 1
+    //   if(newPostition < 0){
+    //     newPostition = 3
+    //   }
+    //   console.log("cur CHANGE TURN",(this.state.players[newPostition]));
+    //   this.setState({
+    //     turn: newPostition
+    //   })
+    // }else{
     console.log("cur CHANGE TURN",(this.state.turn +1), ((this.state.turn) % this.state.players.length));
 
     this.setState({
       turn: ((this.state.turn +1) % this.state.players.length)
     })
+    // }
   }
 
   updateBackend(){
@@ -175,14 +218,14 @@ class GameContainer extends Component {
 
   compTurn =() => {
     console.log("NEW COMP TURN");
-    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
 
     while (potentialMoves.length === 0) {
       //drawcard
       if(this.state.deck.length > 0){
         this.drawcard()
       }
-      potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+      potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
     }
 
     //change to pic random

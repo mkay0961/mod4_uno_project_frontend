@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <GameContainer id={1}/>
+        <GameContainer/>
       </div>
     );
   }

@@ -15,7 +15,7 @@ class GameContainer extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      id: this.props.id,
+      id: null,
       deck: [],
       active_card: null,
       players: [],
@@ -27,10 +27,7 @@ class GameContainer extends Component {
   }
 
   getURL(){
-    return (this.state.id === null)?
-    `http://localhost:3000/games/1`
-    :
-    `http://localhost:3000/games/${this.state.id}`
+    return`http://localhost:3000/games/1`
   }
 
   componentDidMount() {

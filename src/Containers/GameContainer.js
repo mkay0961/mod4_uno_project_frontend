@@ -1,9 +1,4 @@
-//add four players
-
-//then
-
 //ADDD INSTULTS
-
 
 
 
@@ -12,15 +7,15 @@ import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
-import Header from '../Components/Header'
 import Save from '../Components/Save'
-import NewGame from '../Components/Header'
+import NewGame from '../Components/NewGame'
 
 class GameContainer extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
+      id: this.props.id,
       deck: [],
       active_card: null,
       players: [],
@@ -32,7 +27,10 @@ class GameContainer extends Component {
   }
 
   getURL(){
-    return 'http://localhost:3000/games/1'
+    return (this.state.id === null)?
+    `http://localhost:3000/games/1`
+    :
+    `http://localhost:3000/games/${this.state.id}`
   }
 
   componentDidMount() {
@@ -42,12 +40,34 @@ class GameContainer extends Component {
   }
 
   processJson(game){
+    // console.log("hi", game.id);
     this.setState({
+      id: game.id,
       deck: game.deck,
       active_card: game.active_card,
       players: game.players,
       loaded: true
     })
+  }
+  getPostURL(){
+    return this.getURL().slice(0, -2);
+  }
+
+  newGame = () => {
+    console.log("new game")
+    console.log(this.getPostURL());
+    //change this to input from a form
+    let data = {name: "matthew"}
+
+
+    fetch(this.getPostURL(),{
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(res => res.json())
+      .then(json => console.log(json))
   }
 
   cardlogic(card){
@@ -112,6 +132,7 @@ class GameContainer extends Component {
   updateBackend(){
     console.log("GONNA FETCH");
     let data = {}
+    data.id = this.state.id
     data.game_status = this.state.game_status
     data.winner = this.state.winner
     data.active_card = this.state.active_card
@@ -125,7 +146,7 @@ class GameContainer extends Component {
       },
       body: JSON.stringify(data)
     }).then(res => res.json())
-      .then(json => console.log(json))
+      .then(json => console.log("GAME SAVED", json))
   }
 
   checkWin(){
@@ -168,7 +189,7 @@ class GameContainer extends Component {
     }
 
     //change to pic random
-    let card = potentialMoves[0]
+    let card = potentialMoves[Math.floor((Math.random()*potentialMoves.length))]
     this.playCard(card)
 
     // this.changeTurn()
@@ -190,10 +211,10 @@ class GameContainer extends Component {
         <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
         <CompHandContainer comphand={this.state.players[2].cards}name={this.state.players[2].name}/>
         <CompHandContainer comphand={this.state.players[3].cards}name={this.state.players[3].name}/>
-        <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
+        <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turn={this.state.players[this.state.turn]}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
-        <Save />
-        <NewGame />
+        <Save saveGame={this.saveGame}/>
+        <NewGame newGame={this.newGame}/>
       </div>
       :
       null

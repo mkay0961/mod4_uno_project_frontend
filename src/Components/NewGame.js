@@ -4,7 +4,7 @@ const NewGame = (props) => {
 
   return (
     <div >
-      <button>New Game</button>
+      <button onClick={props.newGame}>New Game</button>
     </div>
   )
 }

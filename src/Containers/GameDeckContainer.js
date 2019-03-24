@@ -10,7 +10,7 @@ class GameDeckContainer extends Component {
             <Card data={this.props.activeCard} onSelectCardClick={this.props.handleActiveCard} />
             <Deck handleDeckClick={this.props.handleDeckClick}/>
             <div>
-              {`Current turn: player ${this.props.turnCount}`}
+              {`Current turn: ${this.props.turn.name}`}
             </div>
         </div>
       )

@@ -26,7 +26,7 @@ class GameContainer extends Component {
     .then(game => this.initGame(game) )
   }
 
-  initGame(game){
+  initGame(game) {
     this.setState({
       deck: game.deck,
       activeCard: game.active_card,
@@ -35,61 +35,81 @@ class GameContainer extends Component {
     })
   }
 
-  cardlogic(card){
+  checkValidMove(card) {
     //returns true if the played card matches the activeCard color or number, otherwise returns false
     let {Number, Color} = this.state.activeCard
     return card.Number === Number || card.Color === Color ? true : false
   }
 
-  drawcard=()=>{
-    if(this.state.deck.length > 0 ){
-      let drawnCard = this.state.deck.pop()
+  checkWin() {
+    let activePlayer = this.state.players[this.state.turn]
+    let cardCount = activePlayer.cards.length
 
-      let updatedDeck = this.state.deck
-      updatedDeck = updatedDeck.filter((c)=>c!==drawnCard)
-
-      let player = {...this.state.players[this.state.turn]}
-
-      player.cards = [...player.cards, drawnCard]
-
-      let updatedPlayers = [...this.state.players]
-      updatedPlayers.splice(this.state.turn,1,player)
-
+    if (cardCount === 0) {
       this.setState({
-        deck: updatedDeck,
-        players: updatedPlayers
+        winner: activePlayer,
+        gameStatus: "Completed"
       })
-
+      alert(`WINNER ${activePlayer.name}`)
     }
   }
 
-  playCard = (card) =>{
-    console.log("PLAY CARD");
-    let pastActiveCard = this.state.activeCard
+  shuffleDeck = (deck) => {
+    return deck.sort(() => Math.random() - 0.5)
+  }
 
+  drawCard = () => {
+    //removes one card from the deck and adds it to the current players hand
     let player = {...this.state.players[this.state.turn]}
+    let deck = [...this.state.deck]
 
-    player.cards = player.cards.filter((c)=>c!==card)
-    let updatedPlayers = [...this.state.players]
-    updatedPlayers.splice(this.state.turn,1,player)
-    console.log(this.state.players[this.state.turn]);
-    this.setState({
-      activeCard: card,
-      deck: [pastActiveCard, ...this.state.deck].sort(() => Math.random() - 0.5),
-      players: updatedPlayers
-    },()=>{this.checkWin()
-          this.changeTurn()
-        })
+    if (deck.length > 0 ) {
+      let drawnCard = this.state.deck.pop()
+      deck = deck.filter(c => c !== drawnCard)
+      player.cards = [...player.cards, drawnCard]
 
+      let updatedPlayers = [...this.state.players]
+      updatedPlayers.splice(this.state.turn, 1, player)
 
+      this.setState({
+        deck: deck,
+        players: updatedPlayers
+      })
+    } else {
+      window.alert('the game is broken')
+    }
 
   }
-  changeTurn(){
-    console.log("cur CHANGE TURN",(this.state.turn +1), ((this.state.turn) % this.state.players.length));
+
+  playCard = (card) => {
+    //makes the played card the new active card, and updates the playing hand and gamestate. chains into checking for a winner and changing the turn
+    let player = {...this.state.players[this.state.turn]}
+    let pastActiveCard = this.state.activeCard
+
+    player.cards = player.cards.filter(c => c !== card)
+
+    let updatedPlayers = [...this.state.players]
+    updatedPlayers.splice(this.state.turn, 1, player)
+
+    this.setState({
+      activeCard: card,
+      deck: this.shuffleDeck([pastActiveCard, ...this.state.deck]),
+      players: updatedPlayers
+    },
+    () => {
+      this.checkWin()
+      this.changeTurn()
+      }
+    )
+
+  }
+
+  changeTurn() {
 
     this.setState({
       turn: ((this.state.turn +1) % this.state.players.length)
     })
+
   }
 
   updateBackend(){
@@ -111,53 +131,32 @@ class GameContainer extends Component {
       .then(json => console.log(json))
   }
 
-  checkWin(){
-    console.log("CHECK WINNNN");
-    let cardCount = this.state.players[this.state.turn].cards.length
-    // console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
-    if(cardCount === (0)){
-      this.setState({
-        winner: this.state.players[this.state.turn],
-        game_status: "Completed"
-      })
-      alert(`WINNER ${this.state.players[this.state.turn].name}`)
-    }
-  }
-
-  onSelectCardClick = (card) =>{
-    if(this.cardlogic(card)){
-      console.log("about to call play card");
+  handleCardClick = (card) => {
+    if (this.checkValidMove(card)) {
       this.playCard(card)
-      // this.changeTurn()
-      console.log(this.state.turn);
-      for(let x= 0; x<3000;x+=1000){
+      for (let x = 0; x < 3000; x += 1000) {
         setTimeout(this.compTurn, x)
       }
-
-
     }
+
   }
 
-  compTurn =() => {
-    console.log("NEW COMP TURN");
-    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.activeCard.Number || card.Color === this.state.activeCard.Color)
+  compTurn = () => {
+    let activePlayer = this.state.players[this.state.turn]
+    let potentialMoves = activePlayer.cards.filter(card => this.checkValidMove(card))
 
     while (potentialMoves.length === 0) {
-      //drawcard
-      if(this.state.deck.length > 0){
-        this.drawcard()
-      }
-      potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.activeCard.Number || card.Color === this.state.activeCard.Color)
+      this.drawCard()
+      potentialMoves = activePlayer.cards.filter(card => this.checkValidMove(card))
     }
 
-    //change to pic random
-    let card = potentialMoves[0]
+    //computer selects a random card from their possible plays
+    let card = potentialMoves[Math.floor(Math.random()*potentialMoves.length)]
     this.playCard(card)
 
-    // this.changeTurn()
   }
 
-  handleActiveCard = (card) =>{
+  handleActiveCard = (card) => {
     console.log("you clicked the active card", card);
   }
 
@@ -166,17 +165,34 @@ class GameContainer extends Component {
   }
 
   render() {
-
     return (
       this.state.gameStatus === 'In Progress' ?
       <div>
-        <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
-        <CompHandContainer comphand={this.state.players[2].cards}name={this.state.players[2].name}/>
-        <CompHandContainer comphand={this.state.players[3].cards}name={this.state.players[3].name}/>
-        <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.activeCard} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
-        <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
-        <div className="save-button" onClick={this.saveGame}>
-          SAVE
+        <CompHandContainer
+          comphand={this.state.players[1].cards}
+          name={this.state.players[1].name}
+        />
+        <CompHandContainer
+          comphand={this.state.players[2].cards}
+          name={this.state.players[2].name}
+        />
+        <CompHandContainer
+          comphand={this.state.players[3].cards}
+          name={this.state.players[3].name}
+        />
+        <GameDeckContainer
+          handleDeckClick={this.drawCard}
+          activeCard={this.state.activeCard}
+          handleActiveCard={this.handleActiveCard}
+          turnCount={this.state.turn}
+        />
+        <UserHandContainer
+          onSelectCardClick={this.handleCardClick}
+          userhand={this.state.players[0].cards}
+          name={this.state.players[0].name}
+        />
+        <div className="save-button">
+          <button onClick={this.saveGame}>SAVE</button>
         </div>
       </div>
       :

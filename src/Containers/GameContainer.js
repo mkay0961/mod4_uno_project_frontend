@@ -13,6 +13,8 @@ import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
 import Header from '../Components/Header'
+import Save from '../Components/Save'
+import NewGame from '../Components/Header'
 
 class GameContainer extends Component {
 
@@ -185,15 +187,13 @@ class GameContainer extends Component {
     return (
       this.state.loaded ?
       <div>
-        <Header />
         <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
         <CompHandContainer comphand={this.state.players[2].cards}name={this.state.players[2].name}/>
         <CompHandContainer comphand={this.state.players[3].cards}name={this.state.players[3].name}/>
         <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
-        <div className="save-button" onClick={this.saveGame}>
-          SAVE
-        </div>
+        <Save />
+        <NewGame />
       </div>
       :
       null

@@ -1,10 +1,10 @@
-import React, {Component} from 'react'
+import React from 'react'
 
 const Header = () => {
 
   return (
     <div className="ui nav">
-      UNO!
+      <h1>UNO!</h1>
     </div>
   )
 }

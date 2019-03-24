@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import Card from '../Components/Card'
+import Card from '../components/Card'
 
 
 class UserHandContainer extends Component {

@@ -1,18 +1,10 @@
-//add four players
-
-//then
-
-//ADDD INSTULTS
-
-
-
-
 
 import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
-import Header from '../Components/Header'
+
+const url = () => 'http://localhost:3000/games/1'
 
 class GameContainer extends Component {
 
@@ -20,40 +12,33 @@ class GameContainer extends Component {
     super()
     this.state = {
       deck: [],
-      active_card: null,
+      activeCard: null,
       players: [],
       winner: null,
-      game_status: 'Pending',
-      turn: 0,
-      loaded: false
+      gameStatus: 'Pending',
+      turn: 0
     }
   }
 
-  getURL(){
-    return 'http://localhost:3000/games/1'
-  }
-
   componentDidMount() {
-    fetch(this.getURL())
-    .then(res => res.json())
-    .then(game => this.processJson(game) )
+    fetch( url() )
+    .then( res => res.json() )
+    .then(game => this.initGame(game) )
   }
 
-  processJson(game){
+  initGame(game){
     this.setState({
       deck: game.deck,
-      active_card: game.active_card,
+      activeCard: game.active_card,
       players: game.players,
-      loaded: true
+      gameStatus: 'In Progress'
     })
   }
 
   cardlogic(card){
-    let rtnval = false
-    if (card.Number === this.state.active_card.Number ||card.Color === this.state.active_card.Color ) {
-      rtnval = true
-    }
-    return rtnval
+    //returns true if the played card matches the activeCard color or number, otherwise returns false
+    let {Number, Color} = this.state.activeCard
+    return card.Number === Number || card.Color === Color ? true : false
   }
 
   drawcard=()=>{
@@ -80,7 +65,7 @@ class GameContainer extends Component {
 
   playCard = (card) =>{
     console.log("PLAY CARD");
-    let pastActiveCard = this.state.active_card
+    let pastActiveCard = this.state.activeCard
 
     let player = {...this.state.players[this.state.turn]}
 
@@ -89,7 +74,7 @@ class GameContainer extends Component {
     updatedPlayers.splice(this.state.turn,1,player)
     console.log(this.state.players[this.state.turn]);
     this.setState({
-      active_card: card,
+      activeCard: card,
       deck: [pastActiveCard, ...this.state.deck].sort(() => Math.random() - 0.5),
       players: updatedPlayers
     },()=>{this.checkWin()
@@ -112,7 +97,7 @@ class GameContainer extends Component {
     let data = {}
     data.game_status = this.state.game_status
     data.winner = this.state.winner
-    data.active_card = this.state.active_card
+    data.activeCard = this.state.activeCard
     data.deck = this.state.deck
     data.players = this.state.players
 
@@ -155,14 +140,14 @@ class GameContainer extends Component {
 
   compTurn =() => {
     console.log("NEW COMP TURN");
-    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.activeCard.Number || card.Color === this.state.activeCard.Color)
 
     while (potentialMoves.length === 0) {
       //drawcard
       if(this.state.deck.length > 0){
         this.drawcard()
       }
-      potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.active_card.Number || card.Color === this.state.active_card.Color)
+      potentialMoves = this.state.players[this.state.turn].cards.filter(card => card.Number === this.state.activeCard.Number || card.Color === this.state.activeCard.Color)
     }
 
     //change to pic random
@@ -183,13 +168,12 @@ class GameContainer extends Component {
   render() {
 
     return (
-      this.state.loaded ?
+      this.state.gameStatus === 'In Progress' ?
       <div>
-        <Header />
         <CompHandContainer comphand={this.state.players[1].cards}name={this.state.players[1].name}/>
         <CompHandContainer comphand={this.state.players[2].cards}name={this.state.players[2].name}/>
         <CompHandContainer comphand={this.state.players[3].cards}name={this.state.players[3].name}/>
-        <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.active_card} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
+        <GameDeckContainer handleDeckClick={this.drawcard} activeCard={this.state.activeCard} handleActiveCard={this.handleActiveCard} turnCount={this.state.turn}/>
         <UserHandContainer onSelectCardClick={this.onSelectCardClick} userhand={this.state.players[0].cards} name={this.state.players[0].name} />
         <div className="save-button" onClick={this.saveGame}>
           SAVE

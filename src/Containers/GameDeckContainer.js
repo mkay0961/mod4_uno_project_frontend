@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import Card from '../Components/Card'
-import Deck from '../Components/Deck'
+import Card from '../components/Card'
+import Deck from '../components/Deck'
 
 
 class GameDeckContainer extends Component {

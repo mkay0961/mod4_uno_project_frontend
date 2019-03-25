@@ -27,59 +27,18 @@ class GameContainer extends Component {
     }
   }
 
-  getURL(){
-    return`http://localhost:3000/games/1`
-  }
-
-  componentDidMount() {
-    fetch(this.getURL())
-    .then(res => res.json())
-    .then(game => this.processJson(game) )
-  }
-
-  processJson(game){
-    // console.log("hi", game.id);
-    this.setState({
-      id: game.id,
-      deck: game.deck,
-      active_card: game.active_card,
-      players: game.players,
-      loaded: true
-    })
-  }
-  getPostURL(){
-    return this.getURL().slice(0, -2);
-  }
-
-  newGame = () => {
-    console.log("new game")
-    console.log(this.getPostURL());
-    //change this to input from a form
-    let data = {name: "matthew"}
-
-
-    fetch(this.getPostURL(),{
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    }).then(res => res.json())
-      .then(json => this.processJson(json))
-  }
-
   cardlogic(card){
     let rtnval = false
     if (card.Number === this.state.active_card.Number ||card.Color === this.state.active_card.Color) {
       rtnval = true
     }
-    else if (card.Color === "wild" || this.state.active_card.Color === "wild") {
-      rtnval = true
-    }
+    // else if (card.Color === "wild" ){
+    //   rtnval = true
+    // }
     return rtnval
   }
 
-  drawcard=()=>{
+  drawcard = () => {
     if(this.state.deck.length > 0 ){
       let drawnCard = this.state.deck.pop()
 
@@ -100,6 +59,10 @@ class GameContainer extends Component {
 
     }
   }
+
+
+
+
 
   playCard = (card) =>{
     console.log("PLAY CARD");
@@ -122,16 +85,15 @@ class GameContainer extends Component {
         })
 
     // if(card.Number === "draw2"){
-    //
     //   console.log("DRAW2");
     // }else if(card.Number === "skip"){
-    //   // this.changeTurn()
+    //   this.changeTurn()
     //   console.log("SKIP");
     // }else if (card.Number === "reverse") {
     //   // this.setState({reversed: !this.state.reversed})
     //   console.log("RECERSE");
     // }else if (card.Number === "color") {
-    //   this.setState({})
+    //   // this.setState({})
     //   console.log("wild color");
     // }else if (card.Number === "draw4") {
     //   console.log("draw4");
@@ -169,6 +131,105 @@ class GameContainer extends Component {
     // }
   }
 
+
+  checkWin(){
+    console.log("CHECK WINNNN");
+    let cardCount = this.state.players[this.state.turn].cards.length
+    // console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
+    if(cardCount === (0)){
+      this.setState({
+        winner: this.state.players[this.state.turn],
+        game_status: "Completed"
+      })
+      alert(`WINNER ${this.state.players[this.state.turn].name}`)
+    }
+  }
+
+  onSelectCardClick = (card) =>{
+    if(this.state.turn === 0 && this.cardlogic(card)){
+        console.log("about to call play card");
+        this.playCard(card)
+        // setTimeout(this.compTurn, 1000)
+
+        for(let x= 0; x<3000;x+=1000){
+          setTimeout(this.compTurn, x)
+        }
+     }
+  }
+
+  compTurn = () => {
+    // console.log("HHHHHH", this.state.turn);
+    // while(this.state.turn > 0 && this.state.turn < 4){
+    console.log("NEW COMP TURN");
+    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
+
+    while (potentialMoves.length === 0) {
+      //drawcard
+      if(this.state.deck.length > 0){
+        // setTimeout(this.drawcard, 1000)
+        this.drawcard()
+      }
+      potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
+    }
+
+    //change to pic random
+    let card = potentialMoves[Math.floor((Math.random()*potentialMoves.length))]
+    this.playCard(card)
+    // this.changeTurn()
+  // }
+
+  }
+
+  newGame = () => {
+    console.log("new game")
+
+    let data = {name: "Matthew"}
+
+    fetch(this.getPostURL(),{
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(json => this.processJson(json))
+    }
+
+
+  getURL(){
+    return`http://localhost:3000/games/1`
+  }
+
+  componentDidMount() {
+    fetch(this.getURL())
+    .then(res => res.json())
+    .then(game => this.processJson(game) )
+  }
+
+  processJson(game){
+    this.setState({
+      id: game.id,
+      deck: game.deck,
+      active_card: game.active_card,
+      players: game.players,
+      loaded: true
+    })
+  }
+
+
+  getPostURL(){
+    return this.getURL().slice(0, -2);
+  }
+
+  handleActiveCard = (card) =>{
+    console.log("you clicked the active card", card);
+  }
+
+  saveGame = () => {
+    this.updateBackend()
+  }
+
   updateBackend(){
     console.log("GONNA FETCH");
     let data = {}
@@ -187,60 +248,6 @@ class GameContainer extends Component {
       body: JSON.stringify(data)
     }).then(res => res.json())
       .then(json => console.log("GAME SAVED", json))
-  }
-
-  checkWin(){
-    console.log("CHECK WINNNN");
-    let cardCount = this.state.players[this.state.turn].cards.length
-    // console.log(this.state.players[this.state.turn], this.state.players[this.state.turn].cards.length);
-    if(cardCount === (0)){
-      this.setState({
-        winner: this.state.players[this.state.turn],
-        game_status: "Completed"
-      })
-      alert(`WINNER ${this.state.players[this.state.turn].name}`)
-    }
-  }
-
-  onSelectCardClick = (card) =>{
-    if(this.cardlogic(card)){
-      console.log("about to call play card");
-      this.playCard(card)
-      // this.changeTurn()
-      console.log(this.state.turn);
-      for(let x= 0; x<3000;x+=1000){
-        setTimeout(this.compTurn, x)
-      }
-
-
-    }
-  }
-
-  compTurn =() => {
-    console.log("NEW COMP TURN");
-    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
-
-    while (potentialMoves.length === 0) {
-      //drawcard
-      if(this.state.deck.length > 0){
-        this.drawcard()
-      }
-      potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.cardlogic(card))
-    }
-
-    //change to pic random
-    let card = potentialMoves[Math.floor((Math.random()*potentialMoves.length))]
-    this.playCard(card)
-
-    // this.changeTurn()
-  }
-
-  handleActiveCard = (card) =>{
-    console.log("you clicked the active card", card);
-  }
-
-  saveGame = () => {
-    this.updateBackend()
   }
 
   render() {

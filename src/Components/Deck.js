@@ -12,7 +12,7 @@ class Deck extends Component {
 
   render() {
     return(
-      <div className="card" onClick={this.props.handleDeckClick}>
+      <div className="card" onClick={()=>this.props.handleDeckClick(this.props.turn)}>
         <img onMouseEnter={(e)=>this.enterMouse(e)} onMouseLeave={(e)=>this.leaveMouse(e)} src={require(`../card-imgs/card-back.png`)} alt="card-back" />
       </div>
       )

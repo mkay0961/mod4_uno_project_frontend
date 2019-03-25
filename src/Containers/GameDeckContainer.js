@@ -7,7 +7,9 @@ const GameDeckContainer = (props) => {
   return(
     <div className="ui cards GameDeckContainer">
       <Card data={props.activeCard} onSelectCardClick={props.handleActiveCard} />
-      <Deck handleDeckClick={props.handleDeckClick}/>
+      <Deck handleDeckClick={props.handleDeckClick}
+            turn={props.turn}
+      />
     </div>
   )
 

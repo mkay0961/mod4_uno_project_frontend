@@ -4,6 +4,10 @@ import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
 import Save from '../components/Save'
 import NewGame from '../components/NewGame'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 const url = () => 'http://localhost:3000/games/1'
 
@@ -16,17 +20,27 @@ class GameContainer extends Component {
       reversed: false,
       deck: [],
       activeCard: null,
+      fakeActiveCard: {color: ""},
       players: [],
       winner: null,
       gameStatus: 'Pending',
+      paused: false,
       turn: 0
     }
   }
 
   componentDidMount() {
+    setInterval(()=>{this.checkCompTurn()},1500)
     fetch( url() )
     .then( res => res.json() )
     .then(game => this.initGame(game) )
+  }
+
+  checkCompTurn(){
+    let turn = this.state.turn
+    if(turn !== 0 && !this.state.paused){
+      this.compTurn(turn)
+    }
   }
 
   initGame(game) {
@@ -40,8 +54,16 @@ class GameContainer extends Component {
 
   checkValidMove(card) {
     //returns true if the played card matches the activeCard color or number, otherwise returns false
-    let {Number, Color} = this.state.activeCard
-    return card.Number === Number || card.Color === Color ? true : false
+    let {number, color} = this.state.activeCard
+    if(card.color === color || card.number === number){
+      return true
+    }else if (card.color === "wild") {
+      return true
+    }else if (card.color === this.state.fakeActiveCard.color) {
+      return true
+    }else{
+      return false
+    }
   }
 
   checkWin() {
@@ -61,24 +83,29 @@ class GameContainer extends Component {
     return deck.sort(() => Math.random() - 0.5)
   }
 
-  drawCard = () => {
+  drawCard = (turn) => {
     //removes one card from the deck and adds it to the current players hand
-    let player = {...this.state.players[this.state.turn]}
+    let player = {...this.state.players[turn]}
     let deck = [...this.state.deck]
-    console.log(deck)
+
 
     if (deck.length > 0 ) {
-      let drawnCard = this.state.deck.pop()
-      deck = deck.filter(c => c !== drawnCard)
-      player.cards = [...player.cards, drawnCard]
 
-      let updatedPlayers = [...this.state.players]
-      updatedPlayers.splice(this.state.turn, 1, player)
+        let drawnCard = deck.pop()
 
-      this.setState({
-        deck: deck,
-        players: updatedPlayers
-      })
+        deck = deck.filter(c => c !== drawnCard)
+
+        player.cards = [...player.cards, drawnCard]
+
+
+        let updatedPlayers = [...this.state.players]
+        updatedPlayers.splice(turn, 1, player)
+
+        this.setState({
+          deck: deck,
+          players: updatedPlayers
+        })
+
     } else {
       window.alert('the game is broken')
       this.setState({gameStatus:'Completed'})
@@ -86,15 +113,137 @@ class GameContainer extends Component {
 
   }
 
-  playCard = (card) => {
+  drawExtra(turn, amount){
+    let newTurn = null
+    if(this.state.reversed){
+      newTurn = turn -1
+      if(newTurn < 0){
+        newTurn = 3
+      }
+    }else{
+      newTurn = turn +1
+      if(newTurn > 3){
+        newTurn = 0
+      }
+    }
+
+    let player = {...this.state.players[newTurn]}
+    let deck = [...this.state.deck]
+    let drawnCards = []
+    console.log("DECK=",deck);
+    for (let i=0; i<amount ; i++) {
+      drawnCards.push(deck.pop())
+    }
+
+    deck = deck.filter(c => !drawnCards.includes(c))
+    console.log("DECK=",deck);
+    player.cards = [...player.cards, ...drawnCards]
+
+
+    let updatedPlayers = [...this.state.players]
+    updatedPlayers.splice(newTurn, 1, player)
+    // debugger
+
+    this.setState({
+      deck: deck,
+      players: updatedPlayers
+    })
+
+
+
+
+  }
+
+
+
+  changeColor = () => {
+    if (this.state.turn === 0 ) {
+      this.setState({paused: true})
+      let promise = MySwal.fire({
+        title:"Select Your New Color",
+        input: 'radio',
+        inputOptions: ["Red", "Yellow", "Blue", "Green"]
+      })
+
+      promise.then((res)=>{
+        this.setState({
+          paused: false,
+          fakeActiveCard: {color: ["red", "yellow", "blue", "green"][res.value] }
+        })
+      })
+
+    }else{
+      let randomColor = ["red", "yellow", "blue", "green"][Math.floor(Math.random()*4)]
+      this.setState({fakeActiveCard: {color: randomColor }})
+    }
+  }
+
+  playCard = (card, turn) => {
+    this.setState({fakeActiveCard: {color: ""}})
+    switch(card.number){
+      case("reverse"):
+        this.setState({reversed: !this.state.reversed})
+        console.log("reverse")
+        break;
+      case("skip"):
+        console.log("skip");
+        this.changeTurn()
+        break;
+      case("draw2"):
+        // this.drawExtra(turn, 2)
+        console.log("draw2");
+        break;
+      case("color"):
+        this.changeColor()
+        console.log("rand color");
+        break;
+      case("draw4"):
+        // this.drawExtra(turn, 4)
+        this.changeColor()
+        console.log("draw4");
+        break;
+    }
+
+    if (card.number === 'draw2' || card.number === 'draw4') {
+    let newTurn = null
+    if(this.state.reversed){
+      newTurn = turn -1
+      if(newTurn < 0){
+        newTurn = 3
+      }
+    }else{
+      newTurn = turn +1
+      if(newTurn > 3){
+        newTurn = 0
+      }
+    }
+
+    let drawingPlayer = {...this.state.players[newTurn]}
+    let deck = [...this.state.deck]
+    let drawnCards = []
+    console.log("DECK=",deck);
+    for (let i=0; i<2 ; i++) {
+      drawnCards.push(deck.pop())
+    }
+
+    deck = deck.filter(c => !drawnCards.includes(c))
+    console.log("DECK=",deck);
+    drawingPlayer.cards = [...drawingPlayer.cards, ...drawnCards]
+
+
+    let updatedPlayersOne = [...this.state.players]
+    updatedPlayersOne.splice(newTurn, 1, drawingPlayer)
+  }
+
+
     //makes the played card the new active card, and updates the playing hand and gamestate. chains into checking for a winner and changing the turn
-    let player = {...this.state.players[this.state.turn]}
+    let player = {...this.state.players[turn]}
     let pastActiveCard = this.state.activeCard
 
     player.cards = player.cards.filter(c => c !== card)
 
     let updatedPlayers = [...this.state.players]
-    updatedPlayers.splice(this.state.turn, 1, player)
+    updatedPlayers.splice(turn, 1, player)
 
     this.setState({
       activeCard: card,
@@ -110,35 +259,43 @@ class GameContainer extends Component {
   }
 
   changeTurn() {
+    let turn = this.state.turn
+    if(this.state.reversed){
+      let newTurn = turn - 1
+      if(newTurn < 0){
+        newTurn = 3
+      }
+      this.setState({
+        turn: newTurn
+      })
 
-    this.setState({
-      turn: ((this.state.turn +1) % this.state.players.length)
-    })
-
+    }else{
+      this.setState({
+        turn: ((turn +1) % this.state.players.length)
+      })
+    }
   }
 
   handleCardClick = (card) => {
-    if (this.checkValidMove(card)) {
-      this.playCard(card)
-      for (let x = 0; x < 3000; x += 1000) {
-        setTimeout(this.compTurn, x)
-      }
+    let turn = this.state.turn
+    if(turn === 0 && this.checkValidMove(card)){
+      this.playCard(card,turn)
+      // for (let x = 0; x < 3000; x += 1000) {
+      //   setTimeout(this.compTurn, x)
+      // }
     }
-
   }
 
-  compTurn = () => {
-    let potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
-
+  compTurn = (turn) => {
+    let potentialMoves = this.state.players[turn].cards.filter(card => this.checkValidMove(card))
     while (potentialMoves.length === 0) {
-      this.drawCard()
-      potentialMoves = this.state.players[this.state.turn].cards.filter(card => this.checkValidMove(card))
+      this.drawCard(turn)
+      potentialMoves = this.state.players[turn].cards.filter(card => this.checkValidMove(card))
     }
 
     //computer selects a random card from their possible plays
     let card = potentialMoves[Math.floor(Math.random()*potentialMoves.length)]
-    this.playCard(card)
-
+    this.playCard(card, turn)
   }
 
 
@@ -159,7 +316,7 @@ class GameContainer extends Component {
       body: JSON.stringify(data)
       })
         .then(res => res.json())
-        .then(json => this.processJson(json))
+        .then(json => this.initGame(json))
     }
 
   handleActiveCard = (card) => {
@@ -208,6 +365,7 @@ class GameContainer extends Component {
         />
         <GameDeckContainer
           handleDeckClick={this.drawCard}
+          turn={this.state.turn}
           activeCard={this.state.activeCard}
           handleActiveCard={this.handleActiveCard}
           turnCount={this.state.turn}
@@ -218,7 +376,7 @@ class GameContainer extends Component {
           name={this.state.players[0].name}
         />
       <Save saveGame={this.saveGame}/>
-      <NewGame />
+      <NewGame newGame={this.newGame}/>
       </div>
       :
       null

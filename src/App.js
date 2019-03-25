@@ -3,7 +3,7 @@ import './App.css';
 import GameContainer from './containers/GameContainer'
 import Header from './components/Header'
 import AllGames from './components/AllGames'
-import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
+import { Route} from 'react-router-dom'
 
 class App extends Component {
 

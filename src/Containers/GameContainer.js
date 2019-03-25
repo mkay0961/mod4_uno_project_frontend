@@ -3,7 +3,6 @@ import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
 import Save from '../components/Save'
-import NewGame from '../components/NewGame'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import  {Link} from 'react-router-dom'
@@ -77,11 +76,12 @@ class GameContainer extends Component {
         gameStatus: "Completed"
       })
       this.saveGame()
-      // let promise = MySwal.fire({
-      //   title:`${activePlayer.name} IS THE WINNER`,
-      // }).then(this.props.history.push("/games"))
-      alert(`${activePlayer.name} IS THE WINNER`)
-      this.props.history.push("/games")
+      let promise = MySwal.fire({
+        title:`${activePlayer.name} IS THE WINNER`,
+      })
+      promise.then(this.props.history.push("/games"))
+      // alert(`${activePlayer.name} IS THE WINNER`)
+      // this.props.history.push("/games")
     }
   }
 
@@ -304,6 +304,22 @@ class GameContainer extends Component {
 
   sortClick = () =>{
      console.log("sortme");
+     let promise = MySwal.fire({
+       title:"Sort by",
+       input: 'radio',
+       inputOptions: ["Number", "Color"]
+     })
+     promise.then((res)=>{
+       let array = ["number", "color"]
+       this.sortBy(this.state.players[0].cards,array[res.value])
+       this.setState({})
+     })
+
+  }
+  sortBy(array, sortBy){
+    array.sort(function(a,b) {
+      return ((a[sortBy] < b[sortBy]) ? -1 : ((a[sortBy] > b[sortBy]) ? 1 : 0));
+    })
   }
 
   updateBackend(){

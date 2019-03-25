@@ -1,16 +1,19 @@
-
 import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
 import CompHandContainer from './CompHandContainer'
+import Save from '../components/Save'
+import NewGame from '../components/NewGame'
 
 const url = () => 'http://localhost:3000/games/1'
 
 class GameContainer extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
+      id: null,
+      reversed: false,
       deck: [],
       activeCard: null,
       players: [],
@@ -114,25 +117,6 @@ class GameContainer extends Component {
 
   }
 
-  updateBackend(){
-    console.log("GONNA FETCH");
-    let data = {}
-    data.game_status = this.state.game_status
-    data.winner = this.state.winner
-    data.activeCard = this.state.activeCard
-    data.deck = this.state.deck
-    data.players = this.state.players
-
-    fetch(this.getURL(),{
-      method: "PATCH",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    }).then(res => res.json())
-      .then(json => console.log(json))
-  }
-
   handleCardClick = (card) => {
     if (this.checkValidMove(card)) {
       this.playCard(card)
@@ -157,12 +141,53 @@ class GameContainer extends Component {
 
   }
 
+
+  getPostURL(){
+    return url().slice(0, -2);
+  }
+
+  newGame = () => {
+    console.log("new game")
+
+    let data = {name: "Matthew"}
+
+    fetch(this.getPostURL(),{
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(json => this.processJson(json))
+    }
+
   handleActiveCard = (card) => {
     console.log("you clicked the active card", card);
   }
 
   saveGame = () => {
     this.updateBackend()
+  }
+
+  updateBackend(){
+    console.log("GONNA FETCH");
+    let data = {}
+    data.id = this.state.id
+    data.game_status = this.state.game_status
+    data.winner = this.state.winner
+    data.active_card = this.state.active_card
+    data.deck = this.state.deck
+    data.players = this.state.players
+
+    fetch(url(),{
+      method: "PATCH",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(res => res.json())
+      .then(json => console.log("GAME SAVED", json))
   }
 
   render() {
@@ -192,9 +217,8 @@ class GameContainer extends Component {
           hand={this.state.players[0].cards}
           name={this.state.players[0].name}
         />
-        <div className="save-button">
-          <button onClick={this.saveGame}>SAVE</button>
-        </div>
+      <Save saveGame={this.saveGame}/>
+      <NewGame />
       </div>
       :
       null

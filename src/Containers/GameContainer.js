@@ -346,6 +346,7 @@ class GameContainer extends Component {
     return (
       this.state.gameStatus === 'In Progress' ?
         <div className="grid-container">
+          <div>Comp1 says your not doing so hot</div>
           <div className="item1" id={`person-${1}`} >
             <div className="name" >{this.state.players[1].name}</div>
             <CompHandContainer
@@ -377,7 +378,8 @@ class GameContainer extends Component {
               turnName={this.state.players[this.state.turn].name}
               fakerColor={this.state.fakeActiveCard}
             />
-            <div className={"pos"}>{(this.state.reversed)? " Going to the RIGHT" : " Going to the LEFT"}</div>
+            <div className={"turn"}>Turn</div>
+            <div className={"arrow"}>{(this.state.reversed)? "|   --->   |" : "|   <---   |"}</div>
           </div>
           <div className="item5" id={`person-${0}`}>
             <div className="name" >{this.state.players[0].name}</div>

@@ -30,8 +30,6 @@ class AllGames extends Component {
         .then(res => res.json())
         .then(json =>{
           this.props.history.push(`/games/${json.id}`)
-          // <Redirect to={`/games/${json.id}`}/>
-          console.log(json);
         })
     }
 
@@ -42,7 +40,10 @@ class AllGames extends Component {
       <div className="newGame"><NewGame newGame={this.newGame} /></div>
       <div className="ui cards">
         {this.state.allGames.map((game)=>{
-          return <div className="card"><Link to={`/games/${game.id}`}><button className="game-card">Open Game {game.id}</button></Link></div>
+          return <div className="card">
+                    <Link to={`/games/${game.id}`}><button className="game-card">Open Game {game.id}</button></Link>
+                    <button>Delete this game</button>
+                  </div>
         })}
       </div>
     </div>

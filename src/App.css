@@ -41,7 +41,12 @@
     align-items: center;
     justify-content: center;
 } */
-.pos{
+.arrow{
+
+  margin-top: 20px;
+  /* margin: 10px; */
+}
+.turn{
 
   margin-top: 50px;
   /* margin: 10px; */

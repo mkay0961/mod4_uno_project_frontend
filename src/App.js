@@ -15,11 +15,15 @@ class App extends Component {
 
         <Route path="/games/:id" render={(props)=> {
             let gameId = props.match.params.id
-            return <GameContainer gameId={gameId} />
+            return <GameContainer {...props} gameId={gameId} />
           }}/>
 
         <Route exact path="/games" render={(props)=> {
-            return <AllGames />
+            return <AllGames {...props}/>
+          }}/>
+
+        <Route exact path="/" render={(props)=> {
+              return <AllGames {...props}/>
           }}/>
 
       </div>

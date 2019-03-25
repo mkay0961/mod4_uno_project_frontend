@@ -1,4 +1,3 @@
-
 import React, {Component} from 'react'
 
 class Card extends Component {
@@ -13,6 +12,7 @@ class Card extends Component {
 
   render() {
     return(
+
       <div className="card" >
         {(this.props.data)?
           <div onClick={(e)=>this.props.handleCardClick(this.props.data, e)}>
@@ -24,6 +24,7 @@ class Card extends Component {
           </div>
       }
       </div>
+    
       )
   }
 

@@ -77,7 +77,11 @@ class GameContainer extends Component {
         gameStatus: "Completed"
       })
       this.saveGame()
-      alert(`WINNER ${activePlayer.name}`)
+      // let promise = MySwal.fire({
+      //   title:`${activePlayer.name} IS THE WINNER`,
+      // }).then(this.props.history.push("/games"))
+      alert(`${activePlayer.name} IS THE WINNER`)
+      this.props.history.push("/games")
     }
   }
 
@@ -357,6 +361,7 @@ class GameContainer extends Component {
               turnName={this.state.players[this.state.turn].name}
               fakerColor={this.state.fakeActiveCard}
             />
+            <div className={"pos"}>{(this.state.reversed)? " Going to the RIGHT" : " Going to the LEFT"}</div>
           </div>
           <div className="item5" id={`person-${0}`}>
             <div className="name" >{this.state.players[0].name}</div>
@@ -366,6 +371,8 @@ class GameContainer extends Component {
               hand={this.state.players[0].cards}
               name={this.state.players[0].name}
             />
+            <button onClick={this.sortClick}>Sort Cards</button>
+
         </div>
         <div className="item6">
           <Save saveGame={this.saveGame}/>
@@ -374,7 +381,7 @@ class GameContainer extends Component {
           <Link to={`/games`}><button>All Games</button></Link>
         </div>
         <div className="item8">
-          <NewGame newGame={this.newGame}/>
+          Good Luck
         </div>
       </div>
       :

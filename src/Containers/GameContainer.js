@@ -37,6 +37,9 @@ class GameContainer extends Component {
   }
 
   checkCompTurn(){
+    if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
+      console.log(`Comp ${this.state.turn} says`, this.randomMessage());
+    }
     let turn = this.state.turn
     if(turn !== 0 && !this.state.paused){
       this.compTurn(turn)
@@ -246,8 +249,10 @@ class GameContainer extends Component {
     }else{
       this.setState({
         turn: ((turn +1) % this.state.players.length)
-      },()=>{document.getElementById(`person-${turn}`).classList.remove("highlight-person")})
+      })
     }
+
+    document.getElementById(`person-${turn}`).classList.remove("highlight-person")
 
   }
 
@@ -259,6 +264,10 @@ class GameContainer extends Component {
       //   setTimeout(this.compTurn, x)
       // }
     }
+  }
+  randomMessage(){
+    let array = ["youre losing", "why are you so bad", "you should probably catch up", "youre doing great"]
+    return array[Math.floor(Math.random()*array.length)]
   }
 
   compTurn = (turn) => {
@@ -346,7 +355,6 @@ class GameContainer extends Component {
     return (
       this.state.gameStatus === 'In Progress' ?
         <div className="grid-container">
-          <div>Comp1 says your not doing so hot</div>
           <div className="item1" id={`person-${1}`} >
             <div className="name" >{this.state.players[1].name}</div>
             <CompHandContainer

@@ -130,6 +130,13 @@
   margin: 30px;
   padding: 10px;
 }
+.item8 {
+  grid-column: 3 /  4;
+  grid-row: 4 /  4;
+  margin: 30px;
+  padding: 10px;
+}
+
 
 
 

@@ -6,10 +6,11 @@ import Save from '../components/Save'
 import NewGame from '../components/NewGame'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import  {Link} from 'react-router-dom'
 
 const MySwal = withReactContent(Swal)
 
-const url = () => 'http://localhost:3000/games/1'
+const url = () => 'http://localhost:3000/games/'
 
 class GameContainer extends Component {
 
@@ -31,7 +32,7 @@ class GameContainer extends Component {
 
   componentDidMount() {
     setInterval(()=>{this.checkCompTurn()},1500)
-    fetch( url() )
+    fetch( url()+this.props.gameId )
     .then( res => res.json() )
     .then(game => this.initGame(game) )
   }
@@ -75,6 +76,7 @@ class GameContainer extends Component {
         winner: activePlayer,
         gameStatus: "Completed"
       })
+      this.saveGame()
       alert(`WINNER ${activePlayer.name}`)
     }
   }
@@ -369,6 +371,9 @@ class GameContainer extends Component {
           <Save saveGame={this.saveGame}/>
         </div>
         <div className="item7">
+          <Link to={`/games`}><button>All Games</button></Link>
+        </div>
+        <div className="item8">
           <NewGame newGame={this.newGame}/>
         </div>
       </div>

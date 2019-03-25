@@ -84,7 +84,8 @@ class GameContainer extends Component {
   }
 
   drawCard = (turn) => {
-    //removes one card from the deck and adds it to the current players hand    
+    //removes one card from the deck and adds it to the current players hand
+
     let player = {...this.state.players[turn]}
     let deck = [...this.state.deck]
 
@@ -154,7 +155,12 @@ class GameContainer extends Component {
       let promise = MySwal.fire({
         title:"Select Your New Color",
         input: 'radio',
-        inputOptions: ["Red", "Yellow", "Blue", "Green"]
+        inputOptions: ["Red", "Yellow", "Blue", "Green"],
+        inputValidator: (value) => {
+          if (!value) {
+              return 'You need to choose something!'
+            }
+        }
       })
 
       promise.then((res)=>{
@@ -218,9 +224,10 @@ class GameContainer extends Component {
     )
 
   }
-
   changeTurn() {
     let turn = this.state.turn
+    document.getElementById(`person-${turn}`).classList.add("highlight-person")
+
     if(this.state.reversed){
       let newTurn = turn - 1
       if(newTurn < 0){
@@ -228,13 +235,14 @@ class GameContainer extends Component {
       }
       this.setState({
         turn: newTurn
-      })
+      },()=>{document.getElementById(`person-${turn}`).classList.remove("highlight-person")})
 
     }else{
       this.setState({
         turn: ((turn +1) % this.state.players.length)
-      })
+      },()=>{document.getElementById(`person-${turn}`).classList.remove("highlight-person")})
     }
+
   }
 
   handleCardClick = (card) => {
@@ -267,7 +275,7 @@ class GameContainer extends Component {
   newGame = () => {
     console.log("new game")
 
-    let data = {name: "Matthew"}
+    let data = {name: "Phil"}
 
     fetch(this.getPostURL(),{
       method: "POST",
@@ -288,13 +296,17 @@ class GameContainer extends Component {
     this.updateBackend()
   }
 
+  sortClick = () =>{
+     console.log("sortme");
+  }
+
   updateBackend(){
     console.log("GONNA FETCH");
     let data = {}
     data.id = this.state.id
-    data.game_status = this.state.game_status
+    data.game_status = this.state.gameStatus
     data.winner = this.state.winner
-    data.active_card = this.state.active_card
+    data.active_card = this.state.activeCard
     data.deck = this.state.deck
     data.players = this.state.players
 
@@ -311,33 +323,54 @@ class GameContainer extends Component {
   render() {
     return (
       this.state.gameStatus === 'In Progress' ?
-      <div>
-        <CompHandContainer
-          hand={this.state.players[1].cards}
-          name={this.state.players[1].name}
-        />
-        <CompHandContainer
-          hand={this.state.players[2].cards}
-          name={this.state.players[2].name}
-        />
-        <CompHandContainer
-          hand={this.state.players[3].cards}
-          name={this.state.players[3].name}
-        />
-        <GameDeckContainer
-          handleDeckClick={this.drawCard}
-          turn={this.state.turn}
-          activeCard={this.state.activeCard}
-          handleActiveCard={this.handleActiveCard}
-          turnCount={this.state.turn}
-        />
-        <UserHandContainer
-          handleCardClick={this.handleCardClick}
-          hand={this.state.players[0].cards}
-          name={this.state.players[0].name}
-        />
-      <Save saveGame={this.saveGame}/>
-      <NewGame newGame={this.newGame}/>
+        <div className="grid-container">
+          <div className="item1" id={`person-${1}`} >
+            <div className="name" >{this.state.players[1].name}</div>
+            <CompHandContainer
+              person={"1"}
+              hand={this.state.players[1].cards}
+              name={this.state.players[1].name}
+            />
+            </div>
+          <div className="item2" id={`person-${2}`}>
+            <div className="name">{this.state.players[2].name}</div>
+            <CompHandContainer
+              hand={this.state.players[2].cards}
+              name={this.state.players[2].name}
+            />
+          </div>
+          <div className="item3" id={`person-${3}`}>
+            <div className="name" >{this.state.players[3].name}</div>
+            <CompHandContainer
+              hand={this.state.players[3].cards}
+              name={this.state.players[3].name}
+            />
+          </div>
+          <div className="item4">
+            <GameDeckContainer
+              handleDeckClick={this.drawCard}
+              turn={this.state.turn}
+              activeCard={this.state.activeCard}
+              handleActiveCard={this.handleActiveCard}
+              turnName={this.state.players[this.state.turn].name}
+              fakerColor={this.state.fakeActiveCard}
+            />
+          </div>
+          <div className="item5" id={`person-${0}`}>
+            <div className="name" >{this.state.players[0].name}</div>
+            <UserHandContainer
+              sortClick={this.sortClick}
+              handleCardClick={this.handleCardClick}
+              hand={this.state.players[0].cards}
+              name={this.state.players[0].name}
+            />
+        </div>
+        <div className="item6">
+          <Save saveGame={this.saveGame}/>
+        </div>
+        <div className="item7">
+          <NewGame newGame={this.newGame}/>
+        </div>
       </div>
       :
       null

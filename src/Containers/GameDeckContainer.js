@@ -6,10 +6,19 @@ const GameDeckContainer = (props) => {
 
   return(
     <div className="ui cards GameDeckContainer">
-      <Card data={props.activeCard} onSelectCardClick={props.handleActiveCard} />
+    {(props.fakerColor.color)?
+      <div className={`card-${props.fakerColor.color}`}>
+      </div>
+      :
+      null
+    }
+      <Card data={props.activeCard} handleCardClick={props.handleActiveCard} />
       <Deck handleDeckClick={props.handleDeckClick}
             turn={props.turn}
       />
+      <div>
+        {`The current turn is: ${props.turnName}`}
+      </div>
     </div>
   )
 

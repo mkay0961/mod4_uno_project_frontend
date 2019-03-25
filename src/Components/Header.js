@@ -1,10 +1,15 @@
 import React from 'react'
+import { Menu, Segment } from 'semantic-ui-react'
 
 const Header = () => {
 
   return (
     <div className="ui nav">
-      <h1>UNO!</h1>
+    <Segment inverted>
+        <Menu inverted secondary>
+          
+        </Menu>
+      </Segment>
     </div>
   )
 }

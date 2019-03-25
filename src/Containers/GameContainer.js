@@ -142,16 +142,8 @@ class GameContainer extends Component {
 
     let updatedPlayers = [...this.state.players]
     updatedPlayers.splice(newTurn, 1, player)
-    // debugger
 
-    this.setState({
-      deck: deck,
-      players: updatedPlayers
-    })
-
-
-
-
+    return updatedPlayers
   }
 
 
@@ -179,6 +171,9 @@ class GameContainer extends Component {
   }
 
   playCard = (card, turn) => {
+
+    let updatedPlayers = [...this.state.players]
+
     this.setState({fakeActiveCard: {color: ""}})
     switch(card.number){
       case("reverse"):
@@ -190,7 +185,7 @@ class GameContainer extends Component {
         this.changeTurn()
         break;
       case("draw2"):
-        // this.drawExtra(turn, 2)
+        updatedPlayers = this.drawExtra(turn, 2)
         console.log("draw2");
         break;
       case("color"):
@@ -198,52 +193,60 @@ class GameContainer extends Component {
         console.log("rand color");
         break;
       case("draw4"):
-        // this.drawExtra(turn, 4)
+        updatedPlayers = this.drawExtra(turn, 4)
         this.changeColor()
         console.log("draw4");
         break;
     }
-
-    if (card.number === 'draw2' || card.number === 'draw4') {
-    let newTurn = null
-    if(this.state.reversed){
-      newTurn = turn -1
-      if(newTurn < 0){
-        newTurn = 3
-      }
-    }else{
-      newTurn = turn +1
-      if(newTurn > 3){
-        newTurn = 0
-      }
-    }
-
-    let drawingPlayer = {...this.state.players[newTurn]}
-    let deck = [...this.state.deck]
-    let drawnCards = []
-    console.log("DECK=",deck);
-    for (let i=0; i<2 ; i++) {
-      drawnCards.push(deck.pop())
-    }
-
-    deck = deck.filter(c => !drawnCards.includes(c))
-    console.log("DECK=",deck);
-    drawingPlayer.cards = [...drawingPlayer.cards, ...drawnCards]
-
-
-    let updatedPlayersOne = [...this.state.players]
-    updatedPlayersOne.splice(newTurn, 1, drawingPlayer)
-  }
-
-
-    //makes the played card the new active card, and updates the playing hand and gamestate. chains into checking for a winner and changing the turn
+    debugger
     let player = {...this.state.players[turn]}
     let pastActiveCard = this.state.activeCard
 
     player.cards = player.cards.filter(c => c !== card)
 
-    let updatedPlayers = [...this.state.players]
     updatedPlayers.splice(turn, 1, player)
+
+    // debugger
+
+    // if (card.number === 'draw2' || card.number === 'draw4') {
+      // let amount = card.number.split("w")[1]
+      //
+      // let newTurn = null
+      // if(this.state.reversed){
+      //   newTurn = turn -1
+      //   if(newTurn < 0){
+      //     newTurn = 3
+      //   }
+      // }else{
+      //   newTurn = turn +1
+      //   if(newTurn > 3){
+      //     newTurn = 0
+      //   }
+      // }
+      //
+      // let drawingPlayer = {...this.state.players[newTurn]}
+      // let deck = [...this.state.deck]
+      // let drawnCards = []
+      // console.log("DECK=",deck);
+      // for (let i=0; i<amount ; i++) {
+      //   drawnCards.push(deck.pop())
+      // }
+      //
+      // deck = deck.filter(c => !drawnCards.includes(c))
+      // console.log("DECK=",deck);
+      // drawingPlayer.cards = [...drawingPlayer.cards, ...drawnCards]
+      //
+      //
+      // updatedPlayers.splice(newTurn, 1, drawingPlayer)
+  // }
+
+
+    //makes the played card the new active card, and updates the playing hand and gamestate. chains into checking for a winner and changing the turn
+
+
+
+    // debugger
+
 
     this.setState({
       activeCard: card,

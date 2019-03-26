@@ -28,6 +28,7 @@ class GameContainer extends Component {
     super(props)
     this.state = {
       id: null,
+      allCards: [],
       reversed: false,
       hands: [],
       deck: [],
@@ -42,6 +43,7 @@ class GameContainer extends Component {
   }
 
   initGame(game) {
+    let allCards = game.cards
     let deck = []
     let userHand = []
     let comp1Hand = []
@@ -80,6 +82,8 @@ class GameContainer extends Component {
     }
 
     this.setState({
+      id: game.id,
+      allCards: allCards,
       deck: deck,
       activeCard: activeCard,
       userHand: userHand,
@@ -349,11 +353,6 @@ class GameContainer extends Component {
     this.playCard(card, turn)
   }
 
-
-  getPostURL(){
-    return url().slice(0, -1);
-  }
-
   newGame = () => {
     console.log("new game")
 
@@ -400,14 +399,29 @@ class GameContainer extends Component {
 
   updateBackend(){
     console.log("GONNA FETCH");
+    let cards = [...this.state.allCards]
+    for (const i of cards) {
+      if (this.state.hands[0].includes(i)) {
+        i.game_position = 0
+      } else if (this.state.hands[1].includes(i)) {
+        i.game_position = 1
+      } else if (this.state.hands[2].includes(i)) {
+        i.game_position = 2
+      } else if (this.state.hands[3].includes(i)) {
+        i.game_position = 3
+      } else if (this.state.activeCard === i) {
+        i.game_position = 4
+      } else {
+        i.game_position = 5
+      }
+    }
     let data = {}
     data.id = this.state.id
     data.game_status = this.state.gameStatus
     data.winner = this.state.winner
-    data.active_card = this.state.activeCard
-    data.deck = this.state.deck
-    data.players = this.state.players
-    debugger
+    data.cards = cards
+    // data.players = this.state.players
+    // debugger
     fetch(url()+`${this.state.id}`,{
       method: "PATCH",
       headers: {
@@ -474,7 +488,7 @@ class GameContainer extends Component {
         </div>
         <div className="item6">
           <div class="ui buttons">
-            <Link to={`/games`}><button className="ui button">All Games</button></Link>
+            <Link to={`/games`}><button onClick={this.saveGame}className="ui button">All Games</button></Link>
             <Save saveGame={this.saveGame}/>
           </div>
         </div>

@@ -6,8 +6,17 @@ import Save from '../components/Save'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import  {Link} from 'react-router-dom'
+import { bounce } from 'react-animations';
+import Radium, {StyleRoot} from 'radium';
 
 const MySwal = withReactContent(Swal)
+
+const styles = {
+  bounce: {
+    animation: 'x 1s',
+    animationName: Radium.keyframes(bounce, 'bounce')
+  }
+}
 
 const url = () => 'http://localhost:3000/games/'
 
@@ -30,6 +39,7 @@ class GameContainer extends Component {
   }
 
   componentDidMount() {
+  
     setInterval(()=>{this.checkCompTurn()},1500)
     fetch( url()+this.props.gameId )
     .then( res => res.json() )
@@ -409,6 +419,10 @@ class GameContainer extends Component {
         <div className="item8">
           Good Luck
         </div>
+        <StyleRoot>
+      <div className="test" style={styles.bounce}>
+      </div>
+    </StyleRoot>
       </div>
       :
       null

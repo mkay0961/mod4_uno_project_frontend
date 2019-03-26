@@ -11,6 +11,7 @@
     "react-scripts": "2.1.8",
     "react-smooth-draggable-list": "^0.2.8",
     "semantic-ui-react": "^0.86.0",
+    "speak-tts": "^2.0.8",
     "sweetalert2": "^7.33.1",
     "sweetalert2-react-content": "^1.1.0"
   },

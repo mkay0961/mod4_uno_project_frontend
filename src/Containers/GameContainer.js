@@ -1,7 +1,3 @@
-//disable clicking from all games
-//css
-
-
 import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
@@ -10,10 +6,12 @@ import Save from '../components/Save'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import  {Link} from 'react-router-dom'
+import Test from './Test'
+import Speech from 'speak-tts'
 
 
 const MySwal = withReactContent(Swal)
-
+const speech = new Speech()
 
 const url = () => 'http://localhost:3000/games/'
 
@@ -71,7 +69,7 @@ class GameContainer extends Component {
     }
     let players = game.game_players.sort((a,b) => a.seat - b.seat)
 
-    if (game.game_status === "not started") {
+    if (game.game_status === "Pending") {
       deck = this.shuffleDeck(deck)
       userHand = deck.slice(0,5)
       comp1Hand = deck.slice(5,10)
@@ -92,7 +90,7 @@ class GameContainer extends Component {
       activeCard: activeCard,
       hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
       players: players,
-      gameStatus: 'In Progress'
+      gameStatus: game.game_status
     },()=>{})
 
   }
@@ -106,9 +104,20 @@ class GameContainer extends Component {
     setInterval(()=>{this.insultPlayer()}, 5000)
   }
 
+  startGame = () => {
+    this.setState({gameStatus: 'In Progress'})
+  }
+
   insultPlayer = () => {
-    if (1 === 0) {
-    let insult = insults()[Math.floor(Math.random()*insults().length)]
+    if (this.state.turn !== 0) {
+      let insult = insults()[Math.floor(Math.random()*insults().length)]
+      speech.speak({
+          text: insult,
+        }).then(() => {
+          console.log("Success !")
+        }).catch(e => {
+          console.error("An error occurred :", e)
+        })
     console.log(insult)
     }
   }
@@ -442,7 +451,7 @@ class GameContainer extends Component {
 
   render() {
     return (
-      this.state.gameStatus !== 'Pending' ?
+      (this.state.gameStatus !== 'Pending' )?
         <div className="grid-container">
           <div className="item1" id={`person-${1}`} >
 
@@ -502,7 +511,7 @@ class GameContainer extends Component {
         </div>
       </div>
       :
-      null
+      <Test startGame={this.startGame}/>
     )
   }
 

@@ -1,6 +1,10 @@
  .App {
   text-align: center;
 }
+.flexCards{
+
+}
+
 /*
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -76,12 +80,13 @@
     border-color: Yellow;
     border-width: 10px;
 }
-
+.deleteGame{
+  font-size: 100px;
+}
 /* .card{
 
     width: 90px;
     height: 125px;
-    justify-content: center;
     border-style: solid;
 } */
 

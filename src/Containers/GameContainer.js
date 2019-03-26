@@ -1,3 +1,8 @@
+///delete
+//disable clicking from all games
+//css
+
+
 import React, {Component} from 'react'
 import UserHandContainer from './UserHandContainer'
 import GameDeckContainer from './GameDeckContainer'
@@ -93,7 +98,8 @@ class GameContainer extends Component {
       hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
       players: players,
       gameStatus: 'In Progress'
-    })
+    },()=>{this.saveGame()})
+
   }
 
   componentDidMount() {
@@ -354,11 +360,20 @@ class GameContainer extends Component {
   }
 
   newGame = () => {
-    console.log("new game")
+    let data = {}
+    let promise = MySwal.fire({
+      title:"Enter a Name",
+      input: 'text',
+      inputValidator: (value) => {
+        if (!value) {
+            return 'You need to choose something!'
+          }
+      }
+    })
+    promise.then((res)=>{data.name = res.value })
 
-    let data = {name: "Phil"}
-
-    fetch(url(),{
+    promise.then(()=>{
+    fetch("http://localhost:3000/games",{
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -366,7 +381,10 @@ class GameContainer extends Component {
       body: JSON.stringify(data)
       })
         .then(res => res.json())
-        .then(json => this.initGame(json))
+        .then(json =>{
+          this.props.history.push(`/games/${json.id}`)
+        })
+      })
     }
 
   handleActiveCard = (card) => {

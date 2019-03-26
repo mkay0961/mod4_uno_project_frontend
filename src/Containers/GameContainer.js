@@ -51,6 +51,7 @@ class GameContainer extends Component {
 
   initGame(game) {
     this.setState({
+      id: game.id,
       deck: game.deck,
       activeCard: game.active_card,
       players: game.players,
@@ -96,6 +97,8 @@ class GameContainer extends Component {
   }
 
   drawCard = (turn) => {
+    // document.getElementById(`person-${turn}`).classList.remove("highlight-person")
+
     //removes one card from the deck and adds it to the current players hand
 
     let player = {...this.state.players[turn]}
@@ -238,7 +241,7 @@ class GameContainer extends Component {
   }
   changeTurn() {
     let turn = this.state.turn
-    document.getElementById(`person-${turn}`).classList.add("highlight-person")
+    // document.getElementById(`person-${turn}`).classList.add("highlight-person")
 
     if(this.state.reversed){
       let newTurn = turn - 1
@@ -254,8 +257,8 @@ class GameContainer extends Component {
         turn: ((turn +1) % this.state.players.length)
       })
     }
-
-    document.getElementById(`person-${turn}`).classList.remove("highlight-person")
+//     setTimeout(()=>{document.getElementById(`person-${turn}`).classList.remove("highlight-person")
+// },900)
 
   }
 
@@ -287,7 +290,7 @@ class GameContainer extends Component {
 
 
   getPostURL(){
-    return url().slice(0, -2);
+    return url().slice(0, -1);
   }
 
   newGame = () => {
@@ -295,7 +298,7 @@ class GameContainer extends Component {
 
     let data = {name: "Phil"}
 
-    fetch(this.getPostURL(),{
+    fetch(url(),{
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -343,8 +346,8 @@ class GameContainer extends Component {
     data.active_card = this.state.activeCard
     data.deck = this.state.deck
     data.players = this.state.players
-
-    fetch(url(),{
+    debugger
+    fetch(url()+`${this.state.id}`,{
       method: "PATCH",
       headers: {
           "Content-Type": "application/json"
@@ -359,14 +362,15 @@ class GameContainer extends Component {
       this.state.gameStatus === 'In Progress' ?
         <div className="grid-container">
           <div className="item1" id={`person-${1}`} >
+
             <div className="name" >{this.state.players[1].name}</div>
             <CompHandContainer
-              person={"1"}
               hand={this.state.players[1].cards}
               name={this.state.players[1].name}
             />
             </div>
           <div className="item2" id={`person-${2}`}>
+
             <div className="name">{this.state.players[2].name}</div>
             <CompHandContainer
               hand={this.state.players[2].cards}
@@ -390,27 +394,27 @@ class GameContainer extends Component {
               fakerColor={this.state.fakeActiveCard}
             />
             <div className={"turn"}>Turn</div>
-            <div className={"arrow"}>{(this.state.reversed)? "|   --->   |" : "|   <---   |"}</div>
+            <div className={"arrow"}>{(this.state.reversed)? <i class="arrow right icon"></i>
+            :
+             <i class="arrow left icon"></i>}</div>
           </div>
           <div className="item5" id={`person-${0}`}>
             <div className="name" >{this.state.players[0].name}</div>
+            <div className="scroll">
             <UserHandContainer
               sortClick={this.sortClick}
               handleCardClick={this.handleCardClick}
               hand={this.state.players[0].cards}
               name={this.state.players[0].name}
             />
+            </div>
             <button onClick={this.sortClick}>Sort Cards</button>
-
         </div>
         <div className="item6">
-          <Save saveGame={this.saveGame}/>
-        </div>
-        <div className="item7">
-          <Link to={`/games`}><button>All Games</button></Link>
-        </div>
-        <div className="item8">
-          Good Luck
+          <div class="ui buttons">
+            <Link to={`/games`}><button className="ui button">All Games</button></Link>
+            <Save saveGame={this.saveGame}/>
+          </div>
         </div>
       </div>
       :

@@ -4,7 +4,7 @@ const Save = (props) => {
 
   return (
     <div >
-      <button onClick={()=>props.saveGame()}>Save Game</button>
+      <button className="ui button" onClick={()=>props.saveGame()}>Save Game</button>
     </div>
   )
 }

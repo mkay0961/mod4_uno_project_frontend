@@ -118,7 +118,7 @@ class GameContainer extends Component {
     //   console.log(`Comp ${this.state.turn} says`, this.randomMessage());
     // }
     let turn = this.state.turn
-    if(turn !== 0 && !this.state.paused && this.state.game_status === 'In Progress'){
+    if(turn !== 0 && !this.state.paused && this.state.gameStatus === 'In Progress'){
       this.compTurn(turn)
     }
   }

@@ -1,22 +1,39 @@
 import React, {Component} from 'react'
+import {Transition } from 'semantic-ui-react'
 
 class Card extends Component {
+  state = { visible: true }
 
   enterMouse(e){
-    e.target.className = "highlight"
+    if(window.location.href !== "http://localhost:3001/games"){
+      e.target.className = "highlight"
+    }
   }
 
   leaveMouse(e){
-    e.target.className = ""
+    if(window.location.href !== "http://localhost:3001/games"){
+      e.target.className = ""
+    }
+  }
+
+  handleClick = (e) =>{
+    this.setState({ visible: !this.state.visible })
+    this.props.handleCardClick(this.props.data, e)
+
   }
 
   render() {
+
+    const { visible } = this.state
+
     return(
 
       <div className="card" >
         {(this.props.data)?
-          <div onClick={(e)=>this.props.handleCardClick(this.props.data, e)}>
-            <img onMouseEnter={(e)=>this.enterMouse(e)} onMouseLeave={(e)=>this.leaveMouse(e)} src={require(`../card-imgs/${this.props.data.color}-${this.props.data.number}.png`)} alt="card" />
+          <div onClick={(e)=>this.handleClick(e)}>
+            <Transition animation={"shake"} duration={500} visible={visible}>
+              <img onMouseEnter={(e)=>this.enterMouse(e)} onMouseLeave={(e)=>this.leaveMouse(e)} src={require(`../card-imgs/${this.props.data.color}-${this.props.data.number}.png`)} alt="card" />
+            </Transition>
           </div>
           :
           <div >
@@ -24,7 +41,7 @@ class Card extends Component {
           </div>
       }
       </div>
-    
+
       )
   }
 

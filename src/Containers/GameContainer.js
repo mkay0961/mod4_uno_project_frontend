@@ -90,10 +90,6 @@ class GameContainer extends Component {
       allCards: allCards,
       deck: deck,
       activeCard: activeCard,
-      userHand: userHand,
-      comp1Hand: comp1Hand,
-      comp2Hand: comp2Hand,
-      comp3Hand: comp3Hand,
       hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
       players: players,
       gameStatus: 'In Progress'
@@ -122,7 +118,7 @@ class GameContainer extends Component {
     //   console.log(`Comp ${this.state.turn} says`, this.randomMessage());
     // }
     let turn = this.state.turn
-    if(turn !== 0 && !this.state.paused){
+    if(turn !== 0 && !this.state.paused && this.state.game_status === 'In Progress'){
       this.compTurn(turn)
     }
   }
@@ -148,7 +144,7 @@ class GameContainer extends Component {
     if (cardCount === 0) {
       this.setState({
         winner: activePlayer,
-        gameStatus: "In Progress"
+        gameStatus: "Completed"
       },()=>{
         this.saveGame()
         alert(`${activePlayer.name} IS THE WINNER`)
@@ -231,8 +227,6 @@ class GameContainer extends Component {
     return newHands
   }
 
-
-
   changeColor = () => {
     if (this.state.turn === 0 ) {
       this.setState({paused: true})
@@ -289,7 +283,7 @@ class GameContainer extends Component {
         console.log("draw4");
         break;
       default:
-        console.log('hi');
+
       }
 
     let pastActiveCard = this.state.activeCard
@@ -448,7 +442,7 @@ class GameContainer extends Component {
 
   render() {
     return (
-      this.state.gameStatus === 'In Progress' ?
+      this.state.gameStatus !== 'Pending' ?
         <div className="grid-container">
           <div className="item1" id={`person-${1}`} >
 
@@ -484,7 +478,7 @@ class GameContainer extends Component {
               fakerColor={this.state.fakeActiveCard}
             />
             <div className={"turn"}>Turn</div>
-            <div className={"arrow"}>{(this.state.reversed)? <i class="arrow right icon"></i>
+            <div className={"arrow"}>{(this.state.reversed)? <i className="arrow right icon"></i>
             :
              <i className="arrow left icon"></i>}</div>
           </div>

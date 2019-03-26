@@ -7,8 +7,8 @@ const Header = () => {
     <div className="ui nav">
     <Segment inverted>
         <Menu inverted secondary>
-          <Menu.Menu position='center'>
-            
+          <Menu.Menu>
+
           </Menu.Menu>
         </Menu>
       </Segment>

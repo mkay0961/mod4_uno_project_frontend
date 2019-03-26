@@ -265,8 +265,6 @@ class GameContainer extends Component {
     let newHands = [...this.state.hands]
     let activeHand = newHands[turn]
 
-    let updatedPlayers = [...this.state.players]
-
     this.setState({fakeActiveCard: {color: ""}})
     switch(card.number){
       case("reverse"):
@@ -290,9 +288,10 @@ class GameContainer extends Component {
         this.changeColor()
         console.log("draw4");
         break;
-    }
+      default:
+        console.log('hi');
+      }
 
-    // let player = {...this.state.players[turn]}
     let pastActiveCard = this.state.activeCard
 
     activeHand = activeHand.filter(c => c !== card)
@@ -487,7 +486,7 @@ class GameContainer extends Component {
             <div className={"turn"}>Turn</div>
             <div className={"arrow"}>{(this.state.reversed)? <i class="arrow right icon"></i>
             :
-             <i class="arrow left icon"></i>}</div>
+             <i className="arrow left icon"></i>}</div>
           </div>
           <div className="item5" id={`person-${0}`}>
             <div className="name" >{this.state.players[0].player.name}</div>
@@ -502,7 +501,7 @@ class GameContainer extends Component {
             <button onClick={this.sortClick}>Sort Cards</button>
         </div>
         <div className="item6">
-          <div class="ui buttons">
+          <div className="ui buttons">
             <Link to={`/games`}><button onClick={this.saveGame}className="ui button">All Games</button></Link>
             <Save saveGame={this.saveGame}/>
           </div>

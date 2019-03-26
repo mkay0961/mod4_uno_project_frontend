@@ -29,10 +29,6 @@ class GameContainer extends Component {
     this.state = {
       id: null,
       reversed: false,
-      userHand: [],
-      comp1Hand: [],
-      comp2Hand: [],
-      comp3Hand: [],
       hands: [],
       deck: [],
       activeCard: null,

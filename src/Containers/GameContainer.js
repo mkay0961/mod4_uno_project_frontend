@@ -13,6 +13,15 @@ const MySwal = withReactContent(Swal)
 
 const url = () => 'http://localhost:3000/games/'
 
+const insults = () => [
+  "youre losing",
+  "why are you so bad",
+  "you should probably catch up",
+  "youre doing great",
+  "lol..."
+]
+
+
 class GameContainer extends Component {
 
   constructor(props) {
@@ -20,6 +29,7 @@ class GameContainer extends Component {
     this.state = {
       id: null,
       reversed: false,
+      hands: [],
       deck: [],
       activeCard: null,
       fakeActiveCard: {color: ""},
@@ -31,32 +41,81 @@ class GameContainer extends Component {
     }
   }
 
+  initGame(game) {
+    let deck = []
+    let userHand = []
+    let comp1Hand = []
+    let comp2Hand = []
+    let comp3Hand = []
+    let activeCard
+    for (const i of game.cards) {
+      if (i.game_position === 0) {
+        userHand.push(i)
+      } else if (i.game_position === 1) {
+        comp1Hand.push(i)
+      } else if (i.game_position === 2) {
+        comp2Hand.push(i)
+      } else if (i.game_position === 3) {
+        comp3Hand.push(i)
+      }else if (i.game_position === 4) {
+        activeCard = i
+      } else {
+        deck.push(i)
+      }
+    }
+    let players = game.game_players.sort((a,b) => a.seat - b.seat)
+
+    if (game.game_status === "not started") {
+      deck = this.shuffleDeck(deck)
+      userHand = deck.slice(0,5)
+      comp1Hand = deck.slice(5,10)
+      comp2Hand = deck.slice(10,15)
+      comp3Hand = deck.slice(15,20)
+      deck = deck.slice(20)
+      activeCard = deck[0]
+      while (activeCard.color === 'wild') {
+        activeCard = this.shuffleDeck(deck)[0]
+      }
+      deck = deck.slice(1)
+    }
+
+    this.setState({
+      deck: deck,
+      activeCard: activeCard,
+      userHand: userHand,
+      comp1Hand: comp1Hand,
+      comp2Hand: comp2Hand,
+      comp3Hand: comp3Hand,
+      hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
+      players: players,
+      gameStatus: 'In Progress'
+    })
+  }
+
   componentDidMount() {
 
     setInterval(()=>{this.checkCompTurn()},1500)
     fetch( url()+this.props.gameId )
     .then( res => res.json() )
     .then(game => this.initGame(game) )
+    setInterval(()=>{this.insultPlayer()}, 5000)
+  }
+
+  insultPlayer = () => {
+    if (1 === 0) {
+    let insult = insults()[Math.floor(Math.random()*insults().length)]
+    console.log(insult)
+    }
   }
 
   checkCompTurn(){
-    if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
-      console.log(`Comp ${this.state.turn} says`, this.randomMessage());
-    }
+    // if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
+    //   console.log(`Comp ${this.state.turn} says`, this.randomMessage());
+    // }
     let turn = this.state.turn
     if(turn !== 0 && !this.state.paused){
       this.compTurn(turn)
     }
-  }
-
-  initGame(game) {
-    this.setState({
-      id: game.id,
-      deck: game.deck,
-      activeCard: game.active_card,
-      players: game.players,
-      gameStatus: 'In Progress'
-    })
   }
 
   checkValidMove(card) {
@@ -74,8 +133,8 @@ class GameContainer extends Component {
   }
 
   checkWin() {
-    let activePlayer = this.state.players[this.state.turn]
-    let cardCount = activePlayer.cards.length
+    let activePlayer = this.state.players[this.state.turn].player
+    let cardCount = this.state.hands[this.state.turn].length
 
     if (cardCount === 0) {
       this.setState({
@@ -96,30 +155,36 @@ class GameContainer extends Component {
     return deck.sort(() => Math.random() - 0.5)
   }
 
+  getActiveHand = (turn) => {
+    if (turn === 0) {
+      return [...this.state.userHand]
+    } else if (turn === 1) {
+      return [...this.state.comp1Hand]
+    } else if (turn === 2) {
+      return [...this.state.comp2Hand]
+    } else if (turn === 3) {
+      return [...this.state.comp3Hand]
+    }
+  }
+
   drawCard = (turn) => {
     // document.getElementById(`person-${turn}`).classList.remove("highlight-person")
 
     //removes one card from the deck and adds it to the current players hand
-
-    let player = {...this.state.players[turn]}
+    let newHands = [...this.state.hands]
+    let activeHand = newHands[turn]
     let deck = [...this.state.deck]
 
-
     if (deck.length > 0 ) {
-
         let drawnCard = deck.pop()
-
         deck = deck.filter(c => c !== drawnCard)
+        activeHand.push(drawnCard)
 
-        player.cards = [...player.cards, drawnCard]
-
-
-        let updatedPlayers = [...this.state.players]
-        updatedPlayers.splice(turn, 1, player)
+        newHands.splice(turn, 1, activeHand)
 
         this.setState({
           deck: deck,
-          players: updatedPlayers
+          hands: newHands
         })
 
     } else {
@@ -130,36 +195,33 @@ class GameContainer extends Component {
   }
 
   drawExtra(turn, amount){
-    let newTurn = null
+    let newTurn
     if(this.state.reversed){
-      newTurn = turn -1
+      newTurn = turn - 1
       if(newTurn < 0){
         newTurn = 3
       }
     }else{
-      newTurn = turn +1
+      newTurn = turn + 1
       if(newTurn > 3){
         newTurn = 0
       }
     }
 
-    let player = {...this.state.players[newTurn]}
+    let activeHand = [...this.state.hands[newTurn]]
     let deck = [...this.state.deck]
     let drawnCards = []
-    console.log("DECK=",deck);
     for (let i=0; i<amount ; i++) {
       drawnCards.push(deck.pop())
     }
 
     deck = deck.filter(c => !drawnCards.includes(c))
-    console.log("DECK=",deck);
-    player.cards = [...player.cards, ...drawnCards]
+    activeHand = [...activeHand, ...drawnCards]
 
+    let newHands = [...this.state.hands]
+    newHands.splice(newTurn, 1, activeHand)
 
-    let updatedPlayers = [...this.state.players]
-    updatedPlayers.splice(newTurn, 1, player)
-
-    return updatedPlayers
+    return newHands
   }
 
 
@@ -193,6 +255,9 @@ class GameContainer extends Component {
 
   playCard = (card, turn) => {
 
+    let newHands = [...this.state.hands]
+    let activeHand = newHands[turn]
+
     let updatedPlayers = [...this.state.players]
 
     this.setState({fakeActiveCard: {color: ""}})
@@ -206,7 +271,7 @@ class GameContainer extends Component {
         this.changeTurn()
         break;
       case("draw2"):
-        updatedPlayers = this.drawExtra(turn, 2)
+        newHands = this.drawExtra(turn, 2)
         console.log("draw2");
         break;
       case("color"):
@@ -214,23 +279,22 @@ class GameContainer extends Component {
         console.log("rand color");
         break;
       case("draw4"):
-        updatedPlayers = this.drawExtra(turn, 4)
+        newHands = this.drawExtra(turn, 4)
         this.changeColor()
         console.log("draw4");
         break;
     }
 
-    let player = {...this.state.players[turn]}
+    // let player = {...this.state.players[turn]}
     let pastActiveCard = this.state.activeCard
 
-    player.cards = player.cards.filter(c => c !== card)
-
-    updatedPlayers.splice(turn, 1, player)
+    activeHand = activeHand.filter(c => c !== card)
+    newHands.splice(turn, 1, activeHand)
 
     this.setState({
       activeCard: card,
       deck: this.shuffleDeck([pastActiveCard, ...this.state.deck]),
-      players: updatedPlayers
+      hands: newHands
     },
     () => {
       this.checkWin()
@@ -271,16 +335,13 @@ class GameContainer extends Component {
       // }
     }
   }
-  randomMessage(){
-    let array = ["youre losing", "why are you so bad", "you should probably catch up", "youre doing great"]
-    return array[Math.floor(Math.random()*array.length)]
-  }
 
   compTurn = (turn) => {
-    let potentialMoves = this.state.players[turn].cards.filter(card => this.checkValidMove(card))
+    let activeHand = this.state.hands[turn]
+    let potentialMoves = activeHand.filter(card => this.checkValidMove(card))
     while (potentialMoves.length === 0) {
       this.drawCard(turn)
-      potentialMoves = this.state.players[turn].cards.filter(card => this.checkValidMove(card))
+      potentialMoves = activeHand.filter(card => this.checkValidMove(card))
     }
 
     //computer selects a random card from their possible plays
@@ -326,7 +387,7 @@ class GameContainer extends Component {
      })
      promise.then((res)=>{
        let array = ["number", "color"]
-       this.sortBy(this.state.players[0].cards,array[res.value])
+       this.sortBy(this.state.hands[0], array[res.value])
        this.setState({})
      })
 
@@ -363,24 +424,25 @@ class GameContainer extends Component {
         <div className="grid-container">
           <div className="item1" id={`person-${1}`} >
 
-            <div className="name" >{this.state.players[1].name}</div>
+            <div className="name" >{this.state.players[1].player.name}</div>
             <CompHandContainer
-              hand={this.state.players[1].cards}
+              person={"1"}
+              hand={this.state.hands[1]}
               name={this.state.players[1].name}
             />
             </div>
           <div className="item2" id={`person-${2}`}>
 
-            <div className="name">{this.state.players[2].name}</div>
+            <div className="name">{this.state.players[2].player.name}</div>
             <CompHandContainer
-              hand={this.state.players[2].cards}
+              hand={this.state.hands[2]}
               name={this.state.players[2].name}
             />
           </div>
           <div className="item3" id={`person-${3}`}>
-            <div className="name" >{this.state.players[3].name}</div>
+            <div className="name" >{this.state.players[3].player.name}</div>
             <CompHandContainer
-              hand={this.state.players[3].cards}
+              hand={this.state.hands[3]}
               name={this.state.players[3].name}
             />
           </div>
@@ -390,7 +452,7 @@ class GameContainer extends Component {
               turn={this.state.turn}
               activeCard={this.state.activeCard}
               handleActiveCard={this.handleActiveCard}
-              turnName={this.state.players[this.state.turn].name}
+              turnName={this.state.players[this.state.turn].player.name}
               fakerColor={this.state.fakeActiveCard}
             />
             <div className={"turn"}>Turn</div>
@@ -399,12 +461,12 @@ class GameContainer extends Component {
              <i class="arrow left icon"></i>}</div>
           </div>
           <div className="item5" id={`person-${0}`}>
-            <div className="name" >{this.state.players[0].name}</div>
+            <div className="name" >{this.state.players[0].player.name}</div>
             <div className="scroll">
             <UserHandContainer
               sortClick={this.sortClick}
               handleCardClick={this.handleCardClick}
-              hand={this.state.players[0].cards}
+              hand={this.state.hands[0]}
               name={this.state.players[0].name}
             />
             </div>

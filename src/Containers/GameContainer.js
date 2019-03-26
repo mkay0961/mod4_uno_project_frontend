@@ -13,6 +13,15 @@ const MySwal = withReactContent(Swal)
 
 const url = () => 'http://localhost:3000/games/'
 
+const insults = () => [
+  "youre losing",
+  "why are you so bad",
+  "you should probably catch up",
+  "youre doing great",
+  "lol..."
+]
+
+
 class GameContainer extends Component {
 
   constructor(props) {
@@ -37,12 +46,20 @@ class GameContainer extends Component {
     fetch( url()+this.props.gameId )
     .then( res => res.json() )
     .then(game => this.initGame(game) )
+    setInterval(()=>{this.insultPlayer()}, 5000)
+  }
+
+  insultPlayer = () => {
+    if (this.state.players[this.state.turn].cards.length < this.state.players[0].cards.length) {
+    let insult = insults()[Math.floor(Math.random()*insults().length)]
+    console.log(insult)
+    }
   }
 
   checkCompTurn(){
-    if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
-      console.log(`Comp ${this.state.turn} says`, this.randomMessage());
-    }
+    // if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
+    //   console.log(`Comp ${this.state.turn} says`, this.randomMessage());
+    // }
     let turn = this.state.turn
     if(turn !== 0 && !this.state.paused){
       this.compTurn(turn)
@@ -143,13 +160,11 @@ class GameContainer extends Component {
     let player = {...this.state.players[newTurn]}
     let deck = [...this.state.deck]
     let drawnCards = []
-    console.log("DECK=",deck);
     for (let i=0; i<amount ; i++) {
       drawnCards.push(deck.pop())
     }
 
     deck = deck.filter(c => !drawnCards.includes(c))
-    console.log("DECK=",deck);
     player.cards = [...player.cards, ...drawnCards]
 
 
@@ -267,10 +282,6 @@ class GameContainer extends Component {
       //   setTimeout(this.compTurn, x)
       // }
     }
-  }
-  randomMessage(){
-    let array = ["youre losing", "why are you so bad", "you should probably catch up", "youre doing great"]
-    return array[Math.floor(Math.random()*array.length)]
   }
 
   compTurn = (turn) => {

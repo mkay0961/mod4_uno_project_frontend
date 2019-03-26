@@ -1,4 +1,3 @@
-///delete
 //disable clicking from all games
 //css
 
@@ -98,7 +97,7 @@ class GameContainer extends Component {
       hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
       players: players,
       gameStatus: 'In Progress'
-    },()=>{this.saveGame()})
+    },()=>{})
 
   }
 
@@ -149,15 +148,13 @@ class GameContainer extends Component {
     if (cardCount === 0) {
       this.setState({
         winner: activePlayer,
-        gameStatus: "Completed"
+        gameStatus: "In Progress"
+      },()=>{
+        this.saveGame()
+        alert(`${activePlayer.name} IS THE WINNER`)
       })
-      this.saveGame()
-      let promise = MySwal.fire({
-        title:`${activePlayer.name} IS THE WINNER`,
-      })
-      promise.then(this.props.history.push("/games"))
-      // alert(`${activePlayer.name} IS THE WINNER`)
-      // this.props.history.push("/games")
+
+
     }
   }
 

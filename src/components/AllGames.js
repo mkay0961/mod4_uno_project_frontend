@@ -14,9 +14,11 @@ class AllGames extends Component {
     }
   }
   componentDidMount(){
-    fetch("http://localhost:3000/games")
-    .then(res => res.json())
-    .then(json => this.setState({allGames: json}))
+    setTimeout(()=>{
+      fetch("http://localhost:3000/games")
+      .then(res => res.json())
+      .then(json => this.setState({allGames: json}))
+    },1000)
   }
 
   newGame = () => {
@@ -50,9 +52,8 @@ class AllGames extends Component {
       })
     }
 
-  delGame(id){
-
-    fetch(`http://localhost:3000/games/${id}`,{
+  delGame(e){
+    fetch(`http://localhost:3000/games/${e.target.parentElement.id.split("-")[1]}`,{
       method: "DELETE",
       headers: {
           "Content-Type": "application/json"
@@ -60,7 +61,8 @@ class AllGames extends Component {
 
       })
         .then(res => res.json())
-        .then(json => this.setState({allGames: json}))
+        .then(json => this.setState({allGames:json},()=>{this.props.history.push(`/`)}))
+
   }
 
   render() {
@@ -70,9 +72,9 @@ class AllGames extends Component {
       <div className="newGame"><NewGame newGame={this.newGame} /></div>
       <div className="ui cards">
         {this.state.allGames.map((game)=>{
-          return <div className="card gameCard">
-                    <Link to={`/games/${game.id}`}><button ><GameContainer gameId={game.id}/></button></Link>
-                    <button className="deleteGame" onClick={()=>{this.delGame(game.id)}}>Delete this game</button>
+          return <div className="card gameCard" id={`game-${game.id}`}>
+                    <Link to={`/games/${game.id}`}><button id="test"><GameContainer gameId={game.id}/></button></Link>
+                    <button className="deleteGame" onClick={(e)=>{this.delGame(e)}}>Delete this game</button>
                   </div>
         })}
       </div>

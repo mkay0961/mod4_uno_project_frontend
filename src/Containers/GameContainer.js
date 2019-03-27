@@ -162,11 +162,8 @@ class GameContainer extends Component {
         this.saveGame()
         alert(`${activePlayer.name} IS THE WINNER`)
       })
-<<<<<<< HEAD
     } else if (cardCount === 1 && this.state.turn !== 0) {
       this.talk('uno')
-=======
->>>>>>> almost_done
     }
 
   }

@@ -17,29 +17,9 @@ class DealCards extends React.Component {
   }
 
   handleClick = () =>{
-<<<<<<< HEAD:src/Containers/Test.js
-    // let array = ["fly up", "fly down", "fly left", "fly right"]
-    // let k = 0
 
-    // for (let i = 0; i < 20000; i+=1000) {
-    //   this.setState({anime: array[k]},()=>{
-    //     setTimeout(()=>this.setState({ visible: !this.state.visible}), 1000)
-      // })
-
-      // setTimeout(()=>{this.setState({ visible: !this.state.visible,
-      //                                 anime: array[k]
-      //  })}, i)
-    //   k++
-    //   if(k === 4){
-    //     k = 0
-    //   }
-    //
-    // }
-    // this.setState({ visible: !this.state.visible })
-=======
     let array = ["fly up", "fly down", "fly left", "fly right"]
     this.setState({message: false})
->>>>>>> almost_done:src/containers/DealCards.js
     let x = setInterval(()=>{this.dealCard()}, 400)
     setTimeout(()=>{clearInterval(x)
                     this.props.startGame()

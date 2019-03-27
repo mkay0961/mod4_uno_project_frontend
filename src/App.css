@@ -47,7 +47,7 @@
     border-style: solid;
     border-width: 2px;
     flex-direction: column;
-    transform: rotate(90deg);
+    transform: rotate(90deg); 
     align-items: center;
     justify-content: center;
 } */
@@ -68,7 +68,7 @@
   /* margin: 10px; */
 }
 .CompHandContainer{
-    /* display: flex; */
+    display: flex;
     /* border-style: solid;
     border-width: 2px; */
     flex: 0 !important;
@@ -89,6 +89,10 @@
 .deleteGame{
   font-size: 50px;
 }
+.test1{
+  height: 70%;
+}
+
 /* .card{
 
     width: 90px;
@@ -262,7 +266,7 @@
     justify-content: center;
 }
 .UserHandContainer{
-  flex: 0 !important;
+    flex: 0 !important;
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;

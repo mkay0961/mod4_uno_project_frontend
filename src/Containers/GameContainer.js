@@ -18,11 +18,18 @@ const url = () => 'http://localhost:3000/games/'
 const insults = () => [
   "youre losing",
   "why are you so bad",
-  "you should probably catch up",
-  "youre doing great",
-  "lol..."
+  "lol...",
+  "you mad, bro?",
+  "I hope you do better, I feel bad for you.",
+  "I'm not even trying",
+  "Ha ha ha ha ha.",
+  "You stink. And you're bad at uno.",
+  "Wanna hear a joke? Your uno skills.",
+  "You probably use brackets as a text editor.",
+  "I hope there's nothing left but cider at the beer tap",
+  "It might sound crazy but it ain't no lie, bye bye bye",
+  "Please wake up. You are in a coma, dreaming, and this is the only way we can try to reach you. We love you, we want you to come back to us."
 ]
-
 
 class GameContainer extends Component {
 
@@ -97,11 +104,11 @@ class GameContainer extends Component {
 
   componentDidMount() {
 
-    setInterval(()=>{this.checkCompTurn()},1500)
     fetch( url()+this.props.gameId )
     .then( res => res.json() )
     .then(game => this.initGame(game) )
-    setInterval(()=>{this.insultPlayer()}, 5000)
+    this.compTurnInterval = setInterval(()=>{this.checkCompTurn()},1500)
+    this.talkInterval = setInterval(()=>{this.insultPlayer()}, 5000)
   }
 
   startGame = () => {
@@ -109,17 +116,15 @@ class GameContainer extends Component {
   }
 
   insultPlayer = () => {
-    if (this.state.turn !== 0) {
+    let activeHand = this.state.hands[this.state.turn]
+    if (activeHand.length < this.state.hands[0].length) {
       let insult = insults()[Math.floor(Math.random()*insults().length)]
-      speech.speak({
-          text: insult,
-        }).then(() => {
-          console.log("Success !")
-        }).catch(e => {
-          console.error("An error occurred :", e)
-        })
-    console.log(insult)
+      this.talk(insult)
     }
+  }
+
+  talk(text) {
+    speech.speak({text})
   }
 
   checkCompTurn(){
@@ -155,33 +160,22 @@ class GameContainer extends Component {
         winner: activePlayer,
         gameStatus: "Completed"
       },()=>{
+        clearInterval(this.compTurnInterval)
+        clearInterval(this.talkInterval)
         this.saveGame()
         alert(`${activePlayer.name} IS THE WINNER`)
       })
-
-
+    } else if (cardCount === 1 && this.state.turn !== 0) {
+      this.talk('uno')
     }
+
   }
 
   shuffleDeck = (deck) => {
     return deck.sort(() => Math.random() - 0.5)
   }
 
-  getActiveHand = (turn) => {
-    if (turn === 0) {
-      return [...this.state.userHand]
-    } else if (turn === 1) {
-      return [...this.state.comp1Hand]
-    } else if (turn === 2) {
-      return [...this.state.comp2Hand]
-    } else if (turn === 3) {
-      return [...this.state.comp3Hand]
-    }
-  }
-
   drawCard = (turn) => {
-    // document.getElementById(`person-${turn}`).classList.remove("highlight-person")
-
     //removes one card from the deck and adds it to the current players hand
     let newHands = [...this.state.hands]
     let activeHand = newHands[turn]
@@ -218,6 +212,10 @@ class GameContainer extends Component {
       if(newTurn > 3){
         newTurn = 0
       }
+    }
+
+    if (newTurn === 0) {
+      this.talk('get wrecked')
     }
 
     let activeHand = [...this.state.hands[newTurn]]

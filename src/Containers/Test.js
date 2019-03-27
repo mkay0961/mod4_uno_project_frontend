@@ -1,5 +1,4 @@
 import React from 'react'
-import Card from '../components/Card'
 import {Transition } from 'semantic-ui-react'
 import CompHandContainer from './CompHandContainer'
 
@@ -17,8 +16,8 @@ class Test extends React.Component {
           }
 
   handleClick = () =>{
-    let array = ["fly up", "fly down", "fly left", "fly right"]
-    let k = 0
+    // let array = ["fly up", "fly down", "fly left", "fly right"]
+    // let k = 0
 
     // for (let i = 0; i < 20000; i+=1000) {
     //   this.setState({anime: array[k]},()=>{

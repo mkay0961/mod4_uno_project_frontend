@@ -2,20 +2,22 @@ import React from 'react'
 import {Transition } from 'semantic-ui-react'
 import CompHandContainer from './CompHandContainer'
 
-
-class Test extends React.Component {
-
-  state = { visible: true,
-            anime: "fly up",
-            cardsDealt: 0,
-            duration: 500,
-            hand1:[],
-            hand2:[],
-            hand3:[],
-            hand4:[]
-          }
+class DealCards extends React.Component {
+  constructor(){
+    super()
+    this.state = { visible: true,
+                   anime: "fly up",
+                   cardsDealt: 0,
+                   duration: 500,
+                   hand1:[],
+                   hand2:[],
+                   hand3:[],
+                   hand4:[],
+                   message: true}
+  }
 
   handleClick = () =>{
+<<<<<<< HEAD:src/Containers/Test.js
     // let array = ["fly up", "fly down", "fly left", "fly right"]
     // let k = 0
 
@@ -34,14 +36,17 @@ class Test extends React.Component {
     //
     // }
     // this.setState({ visible: !this.state.visible })
+=======
+    let array = ["fly up", "fly down", "fly left", "fly right"]
+    this.setState({message: false})
+>>>>>>> almost_done:src/containers/DealCards.js
     let x = setInterval(()=>{this.dealCard()}, 400)
     setTimeout(()=>{clearInterval(x)
-                    this.props.startGame()}, 16000)
-
+                    this.props.startGame()
+                    }, 16000)
   }
 
   dealCard = () => {
-
     let array = ["fly right", "jiggle", "fly down", "jiggle", "fly left", "jiggle", "fly up", "jiggle"]
     let index = this.state.cardsDealt % 8
     let visible = this.state.visible
@@ -86,24 +91,21 @@ render(){
     return(
       <div className="grid-container">
         <div className="item1" id={`person-${1}`} >
-
             <CompHandContainer hand={this.state.hand1}/>
           </div>
         <div className="item2" id={`person-${2}`}>
-
           <CompHandContainer hand={this.state.hand2}/>
         </div>
         <div className="item3" id={`person-${3}`}>
-
           <CompHandContainer hand={this.state.hand3}/>
         </div>
-        <div className="item4" onClick={this.handleClick}>
-        <Transition animation={this.state.anime} duration={this.state.duration} visible={visible}>
-          <img src={require(`../card-imgs/card-back.png`)} alt="card" />
-        </Transition>
+        <div className="item4 test1" onClick={this.handleClick}>
+            {(this.state.message)?<div>Click the card to deal</div>: null}
+            <Transition animation={this.state.anime} duration={this.state.duration} visible={visible}>
+              <img src={require(`../card-imgs/card-back.png`)} alt="card" />
+            </Transition>
         </div>
         <div className="item5" id={`person-${0}`}>
-
           <CompHandContainer hand={this.state.hand4}/>
       </div>
 
@@ -112,4 +114,4 @@ render(){
 
   }
 }
-export default Test
+export default DealCards

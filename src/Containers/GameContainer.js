@@ -6,7 +6,7 @@ import Save from '../components/Save'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import  {Link} from 'react-router-dom'
-import Test from './Test'
+import DealCards from './DealCards'
 import Speech from 'speak-tts'
 
 
@@ -98,7 +98,7 @@ class GameContainer extends Component {
       hands: [userHand, comp1Hand, comp2Hand, comp3Hand],
       players: players,
       gameStatus: game.game_status
-    },()=>{})
+    },()=>{this.saveGame()})
 
   }
 
@@ -128,9 +128,6 @@ class GameContainer extends Component {
   }
 
   checkCompTurn(){
-    // if(this.state.players[0].cards.length < this.state.players[this.state.turn].cards.length){
-    //   console.log(`Comp ${this.state.turn} says`, this.randomMessage());
-    // }
     let turn = this.state.turn
     if(turn !== 0 && !this.state.paused && this.state.gameStatus === 'In Progress'){
       this.compTurn(turn)
@@ -165,8 +162,11 @@ class GameContainer extends Component {
         this.saveGame()
         alert(`${activePlayer.name} IS THE WINNER`)
       })
+<<<<<<< HEAD
     } else if (cardCount === 1 && this.state.turn !== 0) {
       this.talk('uno')
+=======
+>>>>>>> almost_done
     }
 
   }
@@ -185,9 +185,7 @@ class GameContainer extends Component {
         let drawnCard = deck.pop()
         deck = deck.filter(c => c !== drawnCard)
         activeHand.push(drawnCard)
-
         newHands.splice(turn, 1, activeHand)
-
         this.setState({
           deck: deck,
           hands: newHands
@@ -509,7 +507,7 @@ class GameContainer extends Component {
         </div>
       </div>
       :
-      <Test startGame={this.startGame}/>
+      <DealCards startGame={this.startGame}/>
     )
   }
 

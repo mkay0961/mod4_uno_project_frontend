@@ -109,6 +109,7 @@ class GameContainer extends Component {
     .then(game => this.initGame(game) )
     this.compTurnInterval = setInterval(()=>{this.checkCompTurn()},1500)
     this.talkInterval = setInterval(()=>{this.insultPlayer()}, 5000)
+    window.addEventListener('keydown', (e)=>{console.log(e.key);if (e.key === 'u'){this.cheat()}})
   }
 
   startGame = () => {
@@ -125,6 +126,14 @@ class GameContainer extends Component {
 
   talk(text) {
     speech.speak({text})
+  }
+
+  cheat = () => {
+    let newHands = [...this.state.hands]
+    let activeHand = newHands[0]
+    activeHand = activeHand.slice(activeHand.length - 1)
+    newHands.splice(0, 1, activeHand)
+    this.setState({hands: newHands})
   }
 
   checkCompTurn(){
